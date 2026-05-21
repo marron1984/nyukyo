@@ -9,6 +9,7 @@ import {
   intakeSchema,
   type IntakeForm as IntakeFormType,
 } from "@/lib/schema";
+import { parseIntakeText } from "@/lib/parse";
 import { Field, inputClass } from "./Field";
 
 type SubmitResult = {
@@ -26,12 +27,16 @@ function today(): string {
 
 export function IntakeForm() {
   const [result, setResult] = useState<SubmitResult | null>(null);
+  const [pasteText, setPasteText] = useState("");
+  const [pasteInfo, setPasteInfo] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
     reset,
+    setValue,
+    getValues,
   } = useForm<IntakeFormType>({
     resolver: zodResolver(intakeSchema),
     defaultValues: {
@@ -46,6 +51,30 @@ export function IntakeForm() {
   });
 
   const hasDebt = watch("hasDebt");
+
+  function applyParsed(text: string) {
+    const parsed = parseIntakeText(text);
+    const current = getValues();
+    let count = 0;
+    (Object.keys(parsed) as (keyof typeof parsed)[]).forEach((k) => {
+      if (k === "_unmatched") return;
+      const v = parsed[k];
+      if (v === undefined || v === null || v === "") return;
+      setValue(k as keyof IntakeFormType, v as never, { shouldDirty: true, shouldValidate: false });
+      count++;
+    });
+    void current;
+    const unmatched = parsed._unmatched ?? [];
+    setPasteInfo(
+      `${count}件の項目を反映しました${unmatched.length ? `（未対応ラベル: ${unmatched.join("、")}）` : ""}`,
+    );
+  }
+
+  async function pasteAndSubmit() {
+    applyParsed(pasteText);
+    // 反映後にフォーム全体を送信
+    await handleSubmit(onSubmit)();
+  }
 
   async function onSubmit(values: IntakeFormType) {
     setResult(null);
@@ -76,6 +105,40 @@ export function IntakeForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <section className="rounded-lg bg-amber-50 border border-amber-200 p-6 space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-semibold text-amber-900">テンプレ貼り付け（自動入力）</h2>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => applyParsed(pasteText)}
+              className="rounded-md bg-amber-600 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-amber-700"
+            >
+              貼り付けて反映
+            </button>
+            <button
+              type="button"
+              onClick={pasteAndSubmit}
+              disabled={isSubmitting}
+              className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-slate-800 disabled:opacity-50"
+            >
+              反映してそのまま送信
+            </button>
+          </div>
+        </div>
+        <p className="text-xs text-amber-800">
+          【問い合わせ日】…【ご担当者名】までの定型テキストを下に貼り付けると、各項目を自動で抽出してフォームに反映します。
+        </p>
+        <textarea
+          rows={10}
+          className={`${inputClass} font-mono text-xs`}
+          placeholder={"【問い合わせ日】2026年5月21日\n【顧客名（イニシャル可）】鈴木一世様\n…"}
+          value={pasteText}
+          onChange={(e) => setPasteText(e.target.value)}
+        />
+        {pasteInfo && <p className="text-xs text-amber-900">{pasteInfo}</p>}
+      </section>
+
       <section className="rounded-lg bg-white p-6 shadow-sm space-y-4">
         <h2 className="text-base font-semibold text-slate-800">基本情報</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
