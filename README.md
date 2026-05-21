@@ -48,10 +48,9 @@ npm run dev                  # http://localhost:3000
 
 ## 管理画面
 
-- `/admin/login` … `ADMIN_PASSWORD`（環境変数）でログイン
 - `/admin` … 受付一覧（検索・介護度フィルタ・詳細表示・テンプレ形式コピー・削除）
 
-`.env.local` に `ADMIN_PASSWORD=...` を追加してください。一覧/削除は GAS の同じ Web App に `action: list` / `action: delete` を送ることで実現しているので、GAS側の Script Properties は追加不要です。
+認証は外してあるため URL を知っていれば誰でも閲覧できます。社外公開しない運用前提で、URLは公開しないこと。後から保護が必要になった場合は Vercel の **Deployment Protection**（Password Protection）か Cloudflare Access の前段配置を推奨。
 
 ## 通知本文フォーマット
 

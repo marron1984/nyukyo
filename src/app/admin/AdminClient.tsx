@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import type { IntakeForm } from "@/lib/schema";
 import { formatIntakeMessage } from "@/lib/format";
 
@@ -11,7 +10,6 @@ type Row = IntakeForm & {
 };
 
 export function AdminClient() {
-  const router = useRouter();
   const [rows, setRows] = useState<Row[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [q, setQ] = useState("");
@@ -24,10 +22,6 @@ export function AdminClient() {
     setError(null);
     const res = await fetch("/api/admin/list", { cache: "no-store" });
     setLoading(false);
-    if (res.status === 401) {
-      router.replace("/admin/login");
-      return;
-    }
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       setError(data.error ?? "取得に失敗しました");
@@ -40,11 +34,6 @@ export function AdminClient() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  async function logout() {
-    await fetch("/api/admin/login", { method: "DELETE" });
-    router.replace("/admin/login");
-  }
 
   async function remove(r: Row) {
     if (!confirm(`「${r.customerName}」の行を削除します。よろしいですか？`)) return;
@@ -99,12 +88,6 @@ export function AdminClient() {
           >
             受付フォームへ
           </a>
-          <button
-            onClick={logout}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-100"
-          >
-            ログアウト
-          </button>
         </div>
       </header>
 

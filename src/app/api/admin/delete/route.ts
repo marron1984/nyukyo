@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
-import { isAdminAuthed } from "@/lib/adminAuth";
 import { callGas } from "@/lib/gas";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  if (!isAdminAuthed()) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  }
   const { rowNumber } = (await req.json().catch(() => ({}))) as {
     rowNumber?: number;
   };
