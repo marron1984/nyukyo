@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { intakeSchema } from "@/lib/schema";
 import { formatIntakeMessage } from "@/lib/format";
+import { callGas } from "@/lib/gas";
 
 export const runtime = "nodejs";
 
@@ -14,33 +15,14 @@ export async function POST(req: Request) {
     );
   }
 
-  const url = process.env.GAS_WEBAPP_URL;
-  const secret = process.env.GAS_SHARED_SECRET;
-  if (!url || !secret) {
-    return NextResponse.json(
-      { error: "サーバ設定（GAS_WEBAPP_URL / GAS_SHARED_SECRET）が未設定です" },
-      { status: 500 },
-    );
-  }
-
   const message = formatIntakeMessage(parsed.data);
-
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ secret, payload: parsed.data, message }),
-    redirect: "follow",
+  const { ok, data } = await callGas({
+    action: "create",
+    payload: parsed.data,
+    message,
   });
 
-  const text = await res.text();
-  let data: unknown;
-  try {
-    data = JSON.parse(text);
-  } catch {
-    data = { raw: text };
-  }
-
-  if (!res.ok) {
+  if (!ok) {
     return NextResponse.json(
       { error: "GAS転送に失敗しました", upstream: data },
       { status: 502 },

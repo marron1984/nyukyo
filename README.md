@@ -46,6 +46,13 @@ npm run dev                  # http://localhost:3000
 - スプレッドシートに1行追加されていること。
 - LINE Works の指定トークルームに通知が届くこと。
 
+## 管理画面
+
+- `/admin/login` … `ADMIN_PASSWORD`（環境変数）でログイン
+- `/admin` … 受付一覧（検索・介護度フィルタ・詳細表示・テンプレ形式コピー・削除）
+
+`.env.local` に `ADMIN_PASSWORD=...` を追加してください。一覧/削除は GAS の同じ Web App に `action: list` / `action: delete` を送ることで実現しているので、GAS側の Script Properties は追加不要です。
+
 ## 通知本文フォーマット
 
 `src/lib/format.ts` の `formatIntakeMessage` がユーザー提示のテンプレートそのままで本文を生成します。

@@ -11,6 +11,16 @@ function doPost(e) {
       return jsonOut_({ error: 'unauthorized' }, 401);
     }
 
+    var action = body.action || 'create';
+
+    if (action === 'list') {
+      return jsonOut_({ ok: true, rows: listRows_() });
+    }
+    if (action === 'delete') {
+      deleteRow_(Number(body.rowNumber));
+      return jsonOut_({ ok: true });
+    }
+
     var payload = body.payload || {};
     var message = body.message || '';
 
@@ -73,6 +83,43 @@ function appendRow_(p) {
     return v === undefined || v === null ? '' : v;
   });
   sheet.appendRow(row);
+}
+
+function listRows_() {
+  var props = PropertiesService.getScriptProperties();
+  var ssId = props.getProperty('SPREADSHEET_ID');
+  var sheetName = props.getProperty('SHEET_NAME') || '入居相談';
+  if (!ssId) throw new Error('SPREADSHEET_ID is not set');
+  var ss = SpreadsheetApp.openById(ssId);
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, COLUMNS_.length);
+  var values = range.getValues();
+  var rows = [];
+  for (var i = 0; i < values.length; i++) {
+    var r = values[i];
+    var obj = { _rowNumber: i + 2 };
+    for (var j = 0; j < COLUMNS_.length; j++) {
+      var key = COLUMNS_[j][0];
+      var v = r[j];
+      if (key === 'timestamp' && v instanceof Date) v = v.toISOString();
+      obj[key] = v;
+    }
+    rows.push(obj);
+  }
+  rows.reverse();
+  return rows;
+}
+
+function deleteRow_(rowNumber) {
+  if (!rowNumber || rowNumber < 2) throw new Error('invalid rowNumber');
+  var props = PropertiesService.getScriptProperties();
+  var ssId = props.getProperty('SPREADSHEET_ID');
+  var sheetName = props.getProperty('SHEET_NAME') || '入居相談';
+  var ss = SpreadsheetApp.openById(ssId);
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) throw new Error('sheet not found');
+  sheet.deleteRow(rowNumber);
 }
 
 function jsonOut_(obj, status) {
