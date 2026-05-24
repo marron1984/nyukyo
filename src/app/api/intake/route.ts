@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { intakeSchema } from "@/lib/schema";
-import { formatIntakeMessage } from "@/lib/format";
 import { callGas } from "@/lib/gas";
 
 export const runtime = "nodejs";
@@ -15,11 +14,9 @@ export async function POST(req: Request) {
     );
   }
 
-  const message = formatIntakeMessage(parsed.data);
   const { ok, data } = await callGas({
     action: "create",
     payload: parsed.data,
-    message,
   });
 
   if (!ok) {

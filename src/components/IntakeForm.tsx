@@ -15,7 +15,6 @@ import { Field, inputClass } from "./Field";
 type SubmitResult = {
   ok: boolean;
   message: string;
-  lineworksError?: string;
 };
 
 function today(): string {
@@ -91,8 +90,7 @@ export function IntakeForm() {
       }
       setResult({
         ok: true,
-        message: "スプレッドシートに記録しました／LINE Worksに通知しました",
-        lineworksError: data?.lineworksError,
+        message: "スプレッドシートに記録しました",
       });
       reset({
         ...values,
@@ -224,11 +222,6 @@ export function IntakeForm() {
           {result && (
             <p className={`text-sm ${result.ok ? "text-emerald-700" : "text-rose-700"}`}>
               {result.message}
-              {result.lineworksError && (
-                <span className="block text-xs text-amber-700">
-                  ※LINE Works通知でエラー: {result.lineworksError}
-                </span>
-              )}
             </p>
           )}
         </div>

@@ -22,18 +22,8 @@ function doPost(e) {
     }
 
     var payload = body.payload || {};
-    var message = body.message || '';
-
     appendRow_(payload);
-
-    var lineworksError = null;
-    try {
-      sendLineWorksMessage_(message);
-    } catch (err) {
-      lineworksError = String(err && err.message ? err.message : err);
-    }
-
-    return jsonOut_({ ok: true, lineworksError: lineworksError });
+    return jsonOut_({ ok: true });
   } catch (err) {
     return jsonOut_({ error: String(err && err.message ? err.message : err) }, 500);
   }
@@ -156,5 +146,4 @@ function testIntake() {
     contactPerson: '未確認',
   };
   appendRow_(sample);
-  sendLineWorksMessage_('【テスト送信】入居相談フォーム疎通確認');
 }

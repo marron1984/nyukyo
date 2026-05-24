@@ -7,7 +7,7 @@ export default function Page() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">入居相談 受付フォーム</h1>
           <p className="mt-1 text-sm text-slate-600">
-            送信内容はスプレッドシートに自動記録され、LINE Worksにも通知されます。
+            送信内容はスプレッドシートに自動記録されます。
           </p>
         </div>
         <a

@@ -1,7 +1,7 @@
 export type GasAction =
   | { action: "list" }
   | { action: "delete"; rowNumber: number }
-  | { action: "create"; payload: unknown; message: string };
+  | { action: "create"; payload: unknown };
 
 export async function callGas(body: GasAction): Promise<{
   ok: boolean;
