@@ -124,7 +124,15 @@ function appendRow_(p) {
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(COLUMN_HEADERS_);
   }
-  var nextNo = sheet.getLastRow(); // ヘッダ含む現在行数 = 次データのNo.
+  // No.列(1列目)の既存最大値+1。空シートなら1から。
+  var nextNo = 1;
+  if (sheet.getLastRow() >= 2) {
+    var noValues = sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).getValues();
+    for (var i = 0; i < noValues.length; i++) {
+      var n = Number(noValues[i][0]);
+      if (!isNaN(n) && n >= nextNo) nextNo = n + 1;
+    }
+  }
   sheet.appendRow(formToRow_(p, nextNo));
 }
 
