@@ -1,12 +1,44 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { IntakeForm } from "@/lib/schema";
-import { formatIntakeMessage } from "@/lib/format";
 
-type Row = IntakeForm & {
+const COLUMN_HEADERS = [
+  "No.",
+  "問い合わせ日",
+  "ステータス",
+  "名前",
+  "年齢",
+  "性別",
+  "入居場所",
+  "連絡先",
+  "キーパーソン",
+  "介護度",
+  "ADL詳細",
+  "希望物件",
+  "エント希望",
+  "借金有無",
+  "費用",
+  "その他、備考",
+] as const;
+
+type Row = {
   _rowNumber: number;
-  timestamp: string;
+  c0: string;
+  c1: string;
+  c2: string;
+  c3: string;
+  c4: string;
+  c5: string;
+  c6: string;
+  c7: string;
+  c8: string;
+  c9: string;
+  c10: string;
+  c11: string;
+  c12: string;
+  c13: string;
+  c14: string;
+  c15: string;
 };
 
 export function AdminClient() {
@@ -14,6 +46,7 @@ export function AdminClient() {
   const [error, setError] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [careLevel, setCareLevel] = useState("");
+  const [status, setStatus] = useState("");
   const [detail, setDetail] = useState<Row | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +69,7 @@ export function AdminClient() {
   }, []);
 
   async function remove(r: Row) {
-    if (!confirm(`「${r.customerName}」の行を削除します。よろしいですか？`)) return;
+    if (!confirm(`「${r.c3 || "(無名)"}」の行を削除します。よろしいですか？`)) return;
     const res = await fetch("/api/admin/delete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,24 +88,18 @@ export function AdminClient() {
     if (!rows) return [];
     const qq = q.trim().toLowerCase();
     return rows.filter((r) => {
-      if (careLevel && r.careLevel !== careLevel) return false;
+      if (careLevel && !String(r.c9 ?? "").includes(careLevel)) return false;
+      if (status && !String(r.c2 ?? "").includes(status)) return false;
       if (!qq) return true;
-      const hay = [
-        r.customerName,
-        r.keyPerson,
-        r.companyName,
-        r.contactPerson,
-        r.situation,
-        r.others,
-      ]
+      const hay = Object.values(r)
         .map((x) => String(x ?? "").toLowerCase())
         .join(" ");
       return hay.includes(qq);
     });
-  }, [rows, q, careLevel]);
+  }, [rows, q, careLevel, status]);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
+    <main className="mx-auto max-w-7xl px-4 py-8">
       <header className="mb-6 flex items-center justify-between">
         <h1 className="text-xl font-bold text-slate-900">入居相談 管理画面</h1>
         <div className="flex gap-2">
@@ -93,10 +120,16 @@ export function AdminClient() {
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <input
-          placeholder="顧客名 / キーパーソン / 状況などで検索"
+          placeholder="フリーワード検索（全列対象）"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           className="flex-1 min-w-[240px] rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm"
+        />
+        <input
+          placeholder="ステータスで絞り込み"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm"
         />
         <select
           value={careLevel}
@@ -121,17 +154,17 @@ export function AdminClient() {
 
       <div className="overflow-x-auto rounded-lg bg-white shadow-sm">
         <table className="min-w-full text-sm">
-          <thead className="bg-slate-100 text-left text-xs uppercase text-slate-600">
+          <thead className="bg-slate-100 text-left text-xs text-slate-600">
             <tr>
-              <th className="px-3 py-2">受付日時</th>
-              <th className="px-3 py-2">問い合わせ日</th>
-              <th className="px-3 py-2">顧客名</th>
-              <th className="px-3 py-2">年齢</th>
-              <th className="px-3 py-2">性別</th>
-              <th className="px-3 py-2">介護度</th>
-              <th className="px-3 py-2">費用上限</th>
-              <th className="px-3 py-2">キーパーソン</th>
-              <th className="px-3 py-2 text-right">操作</th>
+              <th className="px-2 py-2">No.</th>
+              <th className="px-2 py-2">問い合わせ日</th>
+              <th className="px-2 py-2">ステータス</th>
+              <th className="px-2 py-2">名前</th>
+              <th className="px-2 py-2">年齢</th>
+              <th className="px-2 py-2">介護度</th>
+              <th className="px-2 py-2">費用</th>
+              <th className="px-2 py-2">キーパーソン</th>
+              <th className="px-2 py-2 text-right">操作</th>
             </tr>
           </thead>
           <tbody>
@@ -143,17 +176,15 @@ export function AdminClient() {
             )}
             {filtered.map((r) => (
               <tr key={r._rowNumber} className="border-t border-slate-100 hover:bg-slate-50">
-                <td className="px-3 py-2 whitespace-nowrap text-xs text-slate-500">
-                  {formatTs(r.timestamp)}
-                </td>
-                <td className="px-3 py-2 whitespace-nowrap">{formatInquiryDate(r.inquiryDate)}</td>
-                <td className="px-3 py-2 font-medium text-slate-900">{r.customerName}</td>
-                <td className="px-3 py-2">{r.age || ""}</td>
-                <td className="px-3 py-2">{r.gender}</td>
-                <td className="px-3 py-2">{r.careLevel}</td>
-                <td className="px-3 py-2">{r.budgetYen ? `${Number(r.budgetYen).toLocaleString()}円` : ""}</td>
-                <td className="px-3 py-2">{r.keyPerson}</td>
-                <td className="px-3 py-2 text-right">
+                <td className="px-2 py-2 whitespace-nowrap text-slate-500">{r.c0}</td>
+                <td className="px-2 py-2 whitespace-nowrap">{r.c1}</td>
+                <td className="px-2 py-2 whitespace-nowrap">{r.c2}</td>
+                <td className="px-2 py-2 font-medium text-slate-900">{r.c3}</td>
+                <td className="px-2 py-2">{r.c4}</td>
+                <td className="px-2 py-2">{r.c9}</td>
+                <td className="px-2 py-2">{r.c14}</td>
+                <td className="px-2 py-2">{r.c8}</td>
+                <td className="px-2 py-2 text-right">
                   <button
                     onClick={() => setDetail(r)}
                     className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs hover:bg-slate-100"
@@ -178,23 +209,6 @@ export function AdminClient() {
   );
 }
 
-function formatTs(s: string | undefined): string {
-  if (!s) return "";
-  const d = new Date(s);
-  if (Number.isNaN(d.getTime())) return String(s);
-  const z = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}/${z(d.getMonth() + 1)}/${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`;
-}
-
-function formatInquiryDate(s: string | undefined): string {
-  if (!s) return "";
-  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
-    const [y, m, d] = s.slice(0, 10).split("-");
-    return `${y}/${m}/${d}`;
-  }
-  return s;
-}
-
 function DetailModal({
   row,
   onClose,
@@ -204,7 +218,15 @@ function DetailModal({
   onClose: () => void;
   onDelete: () => void;
 }) {
-  const text = formatIntakeMessage(row);
+  const lines: string[] = [];
+  for (let i = 0; i < COLUMN_HEADERS.length; i++) {
+    const key = `c${i}` as keyof Row;
+    const v = row[key];
+    if (v === undefined || v === null || v === "") continue;
+    lines.push(`【${COLUMN_HEADERS[i]}】\n${v}`);
+  }
+  const text = lines.join("\n\n");
+
   async function copy() {
     try {
       await navigator.clipboard.writeText(text);
@@ -213,16 +235,15 @@ function DetailModal({
       alert("コピーに失敗しました");
     }
   }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4" onClick={onClose}>
       <div className="max-h-[90vh] w-full max-w-2xl overflow-auto rounded-lg bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">{row.customerName} の詳細</h2>
+          <h2 className="text-lg font-semibold text-slate-900">{row.c3 || "(無名)"} の詳細</h2>
           <button onClick={onClose} className="text-slate-500 hover:text-slate-900">✕</button>
         </div>
-        <pre className="whitespace-pre-wrap rounded-md bg-slate-50 p-4 text-xs text-slate-800">
-{text}
-        </pre>
+        <pre className="whitespace-pre-wrap rounded-md bg-slate-50 p-4 text-xs text-slate-800">{text}</pre>
         <div className="mt-4 flex justify-end gap-2">
           <button onClick={copy} className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-100">テンプレ形式でコピー</button>
           <button onClick={onDelete} className="rounded-md bg-rose-600 px-3 py-1.5 text-sm text-white hover:bg-rose-700">削除</button>

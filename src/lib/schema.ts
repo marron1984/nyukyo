@@ -15,9 +15,13 @@ export const GENDERS = ["男性", "女性", "その他"] as const;
 
 export const intakeSchema = z.object({
   inquiryDate: z.string().min(1, "問い合わせ日は必須です"),
+  status: z.string().default("新規"),
   customerName: z.string().min(1, "顧客名は必須です"),
   age: z.coerce.number().int().min(0).max(130).optional().or(z.literal("" as unknown as number)),
   gender: z.enum(GENDERS),
+  residenceLocation: z.string().default(""),
+  contact: z.string().default(""),
+  keyPerson: z.string().default(""),
   careLevel: z.enum(CARE_LEVELS),
   budgetYen: z.coerce.number().int().min(0).optional().or(z.literal("" as unknown as number)),
 
@@ -28,14 +32,15 @@ export const intakeSchema = z.object({
   adlCommunication: z.string().default(""),
   adlDetail: z.string().default(""),
 
+  preferredProperty: z.string().default(""),
+  ent: z.string().default("未確認"),
+
   hasDebt: z.enum(["あり", "なし"]),
   debtNote: z.string().default(""),
 
   situation: z.string().default(""),
-  ent: z.string().default("未確認"),
   others: z.string().default(""),
 
-  keyPerson: z.string().default(""),
   companyName: z.string().default("未確認"),
   contactPerson: z.string().default("未確認"),
 });

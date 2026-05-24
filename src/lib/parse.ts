@@ -82,6 +82,15 @@ function parseAdlBlock(block: string): {
   return out;
 }
 
+function inferResidence(situation: string): string {
+  // 例: 「大阪市鶴見区在住」「東京都港区在住」
+  const m = situation.match(/([^\s。、]{1,3}[都道府県])?([^\s。、]{1,6}[市区町村])([^\s。、]{0,8}(?=在住))?/);
+  if (m) {
+    return `${m[1] ?? ""}${m[2]}${m[3] ?? ""}`.trim();
+  }
+  return "";
+}
+
 function parseDebt(s: string): { hasDebt: IntakeForm["hasDebt"]; debtNote: string } {
   const trimmed = s.trim();
   if (/^なし/.test(trimmed)) return { hasDebt: "なし", debtNote: "" };
@@ -114,6 +123,7 @@ export function parseIntakeText(text: string): ParseResult {
     hasDebt: debt.hasDebt,
     debtNote: debt.debtNote,
     situation: get("現在の詳細状況"),
+    residenceLocation: inferResidence(get("現在の詳細状況")),
     ent: get("エント") || "未確認",
     others: get("その他"),
     keyPerson: get("キーパーソン"),

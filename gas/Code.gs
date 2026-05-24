@@ -1,7 +1,3 @@
-/**
- * Web App entry. Receives POST from the Next.js API route.
- * Body: { secret, payload, message }
- */
 function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents);
@@ -29,71 +25,122 @@ function doPost(e) {
   }
 }
 
-var COLUMNS_ = [
-  ['timestamp', 'タイムスタンプ'],
-  ['inquiryDate', '問い合わせ日'],
-  ['customerName', '顧客名'],
-  ['age', '年齢'],
-  ['gender', '性別'],
-  ['careLevel', '介護度'],
-  ['budgetYen', '費用上限(円)'],
-  ['adlSitting', 'ADL:座位'],
-  ['adlStanding', 'ADL:立位'],
-  ['adlToilet', 'ADL:排泄'],
-  ['adlMeal', 'ADL:食事'],
-  ['adlCommunication', 'ADL:意思疎通'],
-  ['adlDetail', 'ADL詳細'],
-  ['hasDebt', '借金の有無'],
-  ['debtNote', '借金の補足'],
-  ['situation', '現在の詳細状況'],
-  ['ent', 'エント'],
-  ['others', 'その他'],
-  ['keyPerson', 'キーパーソン'],
-  ['companyName', '御社名'],
-  ['contactPerson', 'ご担当者名'],
+// 既存スプレッドシートの16列。値は formToRow_ で組み立てる。
+var COLUMN_HEADERS_ = [
+  'No.',
+  '問い合わせ日',
+  'ステータス',
+  '名前',
+  '年齢',
+  '性別',
+  '入居\n場所',
+  '連絡先',
+  'キーパーソン',
+  '介護度',
+  'ADL詳細',
+  '希望物件',
+  'エント希望',
+  '借金有無',
+  '費用',
+  'その他、備考',
 ];
 
-function appendRow_(p) {
+function formToRow_(p, nextNo) {
+  function s(v) { return v === undefined || v === null ? '' : String(v); }
+  function fmtDate(v) {
+    if (!v) return '';
+    var m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return m[1] + '/' + m[2] + '/' + m[3];
+    return String(v);
+  }
+  function fmtYen(v) {
+    if (v === undefined || v === null || v === '') return '';
+    var n = Number(v);
+    if (isNaN(n)) return String(v);
+    return n.toLocaleString('ja-JP') + '円まで';
+  }
+  function fmtAge(v) {
+    if (v === undefined || v === null || v === '') return '';
+    return String(v) + '歳';
+  }
+  function joinNonEmpty(parts, sep) {
+    return parts.filter(function (x) { return x && String(x).trim(); }).join(sep);
+  }
+
+  var adlBody = joinNonEmpty([
+    p.adlSitting ? '座位：' + p.adlSitting : '',
+    p.adlStanding ? '立位：' + p.adlStanding : '',
+    p.adlToilet ? '排泄：' + p.adlToilet : '',
+    p.adlMeal ? '食事：' + p.adlMeal : '',
+    p.adlCommunication ? '意思疎通：' + p.adlCommunication : '',
+  ], ' / ');
+  var adlDetail = joinNonEmpty([adlBody, s(p.adlDetail)], '\n');
+
+  var debt = p.hasDebt === 'あり'
+    ? (p.debtNote ? 'あり（' + p.debtNote + '）' : 'あり')
+    : 'なし';
+
+  var contact = joinNonEmpty([
+    s(p.contact),
+    p.companyName && p.companyName !== '未確認' ? '御社名:' + p.companyName : '',
+    p.contactPerson && p.contactPerson !== '未確認' ? '担当:' + p.contactPerson : '',
+  ], ' / ');
+
+  var others = joinNonEmpty([s(p.others), s(p.situation)], '\n\n');
+
+  return [
+    nextNo,                          // No.
+    fmtDate(p.inquiryDate),          // 問い合わせ日
+    s(p.status) || '新規',           // ステータス
+    s(p.customerName),               // 名前
+    fmtAge(p.age),                   // 年齢
+    s(p.gender),                     // 性別
+    s(p.residenceLocation),          // 入居場所
+    contact,                         // 連絡先
+    s(p.keyPerson),                  // キーパーソン
+    s(p.careLevel),                  // 介護度
+    adlDetail,                       // ADL詳細
+    s(p.preferredProperty),          // 希望物件
+    s(p.ent),                        // エント希望
+    debt,                            // 借金有無
+    fmtYen(p.budgetYen),             // 費用
+    others,                          // その他、備考
+  ];
+}
+
+function getSheet_() {
   var props = PropertiesService.getScriptProperties();
   var ssId = props.getProperty('SPREADSHEET_ID');
-  var sheetName = props.getProperty('SHEET_NAME') || '入居相談';
+  var sheetName = props.getProperty('SHEET_NAME') || 'メールから';
   if (!ssId) throw new Error('SPREADSHEET_ID is not set');
-
   var ss = SpreadsheetApp.openById(ssId);
   var sheet = ss.getSheetByName(sheetName);
   if (!sheet) sheet = ss.insertSheet(sheetName);
+  return sheet;
+}
 
+function appendRow_(p) {
+  var sheet = getSheet_();
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(COLUMNS_.map(function (c) { return c[1]; }));
+    sheet.appendRow(COLUMN_HEADERS_);
   }
-
-  var row = COLUMNS_.map(function (c) {
-    if (c[0] === 'timestamp') return new Date();
-    var v = p[c[0]];
-    return v === undefined || v === null ? '' : v;
-  });
-  sheet.appendRow(row);
+  var nextNo = sheet.getLastRow(); // ヘッダ含む現在行数 = 次データのNo.
+  sheet.appendRow(formToRow_(p, nextNo));
 }
 
 function listRows_() {
-  var props = PropertiesService.getScriptProperties();
-  var ssId = props.getProperty('SPREADSHEET_ID');
-  var sheetName = props.getProperty('SHEET_NAME') || '入居相談';
-  if (!ssId) throw new Error('SPREADSHEET_ID is not set');
-  var ss = SpreadsheetApp.openById(ssId);
-  var sheet = ss.getSheetByName(sheetName);
-  if (!sheet || sheet.getLastRow() < 2) return [];
-  var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, COLUMNS_.length);
+  var sheet = getSheet_();
+  if (sheet.getLastRow() < 2) return [];
+  var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, COLUMN_HEADERS_.length);
   var values = range.getValues();
   var rows = [];
   for (var i = 0; i < values.length; i++) {
     var r = values[i];
     var obj = { _rowNumber: i + 2 };
-    for (var j = 0; j < COLUMNS_.length; j++) {
-      var key = COLUMNS_[j][0];
+    for (var j = 0; j < COLUMN_HEADERS_.length; j++) {
       var v = r[j];
-      if (key === 'timestamp' && v instanceof Date) v = v.toISOString();
-      obj[key] = v;
+      if (v instanceof Date) v = v.toISOString();
+      obj['c' + j] = v;
     }
     rows.push(obj);
   }
@@ -103,31 +150,25 @@ function listRows_() {
 
 function deleteRow_(rowNumber) {
   if (!rowNumber || rowNumber < 2) throw new Error('invalid rowNumber');
-  var props = PropertiesService.getScriptProperties();
-  var ssId = props.getProperty('SPREADSHEET_ID');
-  var sheetName = props.getProperty('SHEET_NAME') || '入居相談';
-  var ss = SpreadsheetApp.openById(ssId);
-  var sheet = ss.getSheetByName(sheetName);
-  if (!sheet) throw new Error('sheet not found');
+  var sheet = getSheet_();
   sheet.deleteRow(rowNumber);
 }
 
 function jsonOut_(obj, status) {
-  // Apps Script Web Apps cannot set arbitrary status codes; we embed the status in the body.
   if (status && status !== 200) obj.status = status;
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/**
- * Manual test — fill SPREADSHEET_ID + SHARED_SECRET in Script Properties first.
- */
 function testIntake() {
   var sample = {
     inquiryDate: '2026-05-21',
+    status: '新規',
     customerName: '鈴木一世様',
     age: 78,
     gender: '男性',
+    residenceLocation: '大阪市鶴見区',
+    contact: '',
     careLevel: '要介護2',
     budgetYen: 140000,
     adlSitting: '自立',
@@ -138,9 +179,10 @@ function testIntake() {
     adlDetail: '基本動作は自立。日常生活動作は概ね保たれているが、意思疎通に波があり、会話内容が支離滅裂になることがある。',
     hasDebt: 'なし',
     debtNote: '',
-    situation: '昭和23年1月27日生まれ。大阪市鶴見区在住。家族と同居中。20年前から被害妄想などの症状が多く、近年は徘徊が目立つようになっている。ご家族の介護負担が増加したため、入居相談に至った。',
+    situation: '昭和23年1月27日生まれ。大阪市鶴見区在住。家族と同居中。20年前から被害妄想などの症状が多く、近年は徘徊が目立つようになっている。',
     ent: '未確認',
     others: '徘徊あり。被害妄想あり。キーパーソンである奥様はADL高めだが、認知症あり。',
+    preferredProperty: '',
     keyPerson: '奥様',
     companyName: '未確認',
     contactPerson: '未確認',

@@ -40,6 +40,7 @@ export function IntakeForm() {
     resolver: zodResolver(intakeSchema),
     defaultValues: {
       inquiryDate: today(),
+      status: "新規",
       gender: "男性",
       careLevel: "要介護1",
       hasDebt: "なし",
@@ -167,6 +168,18 @@ export function IntakeForm() {
           </Field>
           <Field label="費用（円・上限）" error={errors.budgetYen?.message as string | undefined}>
             <input type="number" min={0} step={1000} className={inputClass} placeholder="例：140000" {...register("budgetYen")} />
+          </Field>
+          <Field label="ステータス">
+            <input className={inputClass} placeholder="例：新規 / 対応中 / 完了" {...register("status")} />
+          </Field>
+          <Field label="入居場所">
+            <input className={inputClass} placeholder="例：大阪市鶴見区" {...register("residenceLocation")} />
+          </Field>
+          <Field label="連絡先">
+            <input className={inputClass} placeholder="電話番号 / メール 等" {...register("contact")} />
+          </Field>
+          <Field label="希望物件">
+            <input className={inputClass} {...register("preferredProperty")} />
           </Field>
         </div>
       </section>
