@@ -298,6 +298,16 @@ export function AdminClient() {
             再読み込み
           </button>
           <a
+            href="https://docs.google.com/spreadsheets/d/1y00PmqtKRCsyrvaH8ydO3QbzVbFXGEVA2dpKOUDJMaY/edit?gid=0#gid=0"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-100"
+          >
+            <span aria-hidden>📊</span>
+            スプレッドシート
+            <span aria-hidden className="text-emerald-600">↗</span>
+          </a>
+          <a
             href="/"
             className="rounded-md bg-sky-600 px-3 py-1.5 text-sm text-white hover:bg-sky-700"
           >

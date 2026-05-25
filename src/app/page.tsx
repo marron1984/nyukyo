@@ -10,12 +10,24 @@ export default function Page() {
             送信内容はスプレッドシートに自動記録されます。
           </p>
         </div>
-        <a
-          href="/admin"
-          className="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-100 shadow-sm"
-        >
-          管理画面 →
-        </a>
+        <div className="flex flex-col items-end gap-1.5">
+          <a
+            href="https://docs.google.com/spreadsheets/d/1y00PmqtKRCsyrvaH8ydO3QbzVbFXGEVA2dpKOUDJMaY/edit?gid=0#gid=0"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-800 hover:bg-emerald-100 shadow-sm"
+          >
+            <span aria-hidden>📊</span>
+            スプレッドシートを開く
+            <span aria-hidden className="text-emerald-600">↗</span>
+          </a>
+          <a
+            href="/admin"
+            className="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-100 shadow-sm"
+          >
+            管理画面 →
+          </a>
+        </div>
       </header>
       <IntakeForm />
     </main>
