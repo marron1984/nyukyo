@@ -57,7 +57,17 @@ export function ApiKeyModal({
         },
         body: JSON.stringify({ text: "テスト：78歳男性、要介護2" }),
       });
-      const json = await res.json();
+      const raw = await res.text();
+      let json: { ok?: boolean; error?: string } = {};
+      try {
+        json = JSON.parse(raw);
+      } catch {
+        setStatus({
+          kind: "ng",
+          msg: `サーバが不正な応答 (HTTP ${res.status}): ${raw.slice(0, 200)}`,
+        });
+        return;
+      }
       if (res.ok && json.ok) {
         setStatus({ kind: "ok", msg: "✓ 接続OK。AIから応答が返りました" });
       } else {

@@ -124,14 +124,23 @@ export function IntakeForm() {
         },
         body: JSON.stringify({ text }),
       });
-      const json = await res.json();
-      if (!res.ok || !json.ok) {
-        const msg = json?.error ?? "AI抽出に失敗しました";
+      const raw = await res.text();
+      let json: { ok?: boolean; error?: string; data?: Record<string, unknown> };
+      try {
+        json = JSON.parse(raw);
+      } catch {
+        const msg = `サーバが不正な応答を返しました (HTTP ${res.status})${raw ? `: ${raw.slice(0, 200)}` : ""}`;
         setPasteInfo(msg);
         setToast({ kind: "error", message: msg });
         return;
       }
-      const data = json.data as Record<string, unknown>;
+      if (!res.ok || !json.ok) {
+        const msg = json?.error ?? `AI抽出に失敗しました (HTTP ${res.status})`;
+        setPasteInfo(msg);
+        setToast({ kind: "error", message: msg });
+        return;
+      }
+      const data = (json.data ?? {}) as Record<string, unknown>;
       let count = 0;
       Object.entries(data).forEach(([k, v]) => {
         if (v === undefined || v === null || v === "") return;
