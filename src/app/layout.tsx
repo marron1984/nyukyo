@@ -13,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body className="bg-slate-50 text-slate-900 min-h-screen">{children}</body>
+      <body className="min-h-screen bg-nama text-sumi">{children}</body>
     </html>
   );
 }

@@ -26,41 +26,41 @@ export function Toast({
   if (!toast) return null;
 
   const styles: Record<ToastKind, string> = {
-    success: "border-emerald-300 bg-emerald-50 text-emerald-900",
-    error: "border-rose-300 bg-rose-50 text-rose-900",
-    info: "border-sky-300 bg-sky-50 text-sky-900",
+    success: "border-sumi bg-nama-paper text-sumi",
+    error: "border-shu-deep bg-shu-wash text-shu-deep",
+    info: "border-kraft-deep bg-nama-paper text-sumi-soft",
   };
   const icon: Record<ToastKind, string> = {
-    success: "✓",
-    error: "!",
-    info: "i",
+    success: "成",
+    error: "誤",
+    info: "報",
   };
   const iconBg: Record<ToastKind, string> = {
-    success: "bg-emerald-600",
-    error: "bg-rose-600",
-    info: "bg-sky-600",
+    success: "bg-sumi text-nama",
+    error: "bg-shu text-nama",
+    info: "bg-kraft-deep text-nama",
   };
 
   return (
     <div className="fixed top-4 right-4 z-[100] pointer-events-none">
       <div
         role="status"
-        className={`pointer-events-auto flex items-start gap-3 rounded-lg border px-4 py-3 shadow-lg ${styles[toast.kind]} max-w-sm`}
+        className={`pointer-events-auto flex items-start gap-3 rounded-sm border px-4 py-3 shadow-xl ${styles[toast.kind]} max-w-sm`}
       >
         <span
-          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${iconBg[toast.kind]}`}
+          className={`flex h-6 w-6 shrink-0 items-center justify-center font-mincho text-xs font-bold ${iconBg[toast.kind]}`}
           aria-hidden
         >
           {icon[toast.kind]}
         </span>
-        <p className="text-sm leading-relaxed">{toast.message}</p>
+        <p className="text-sm leading-relaxed flex-1">{toast.message}</p>
         <button
           type="button"
           onClick={onClose}
-          className="ml-1 text-slate-500 hover:text-slate-900"
+          className="ml-1 text-sumi-fade hover:text-sumi"
           aria-label="閉じる"
         >
-          ✕
+          ×
         </button>
       </div>
     </div>

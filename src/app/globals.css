@@ -1,8 +1,94 @@
+@import url("https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --nama: #f5f1e8;
+  --sumi: #1a1a1a;
+  --shu: #b8403a;
+  --kraft: #d4c9b3;
+}
+
+html {
+  background-color: var(--nama);
+}
+
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, "Hiragino Sans",
-    "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont,
+    "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  font-feature-settings: "palt";
+  color: var(--sumi);
+  background-color: var(--nama);
+}
+
+/* 和紙テクスチャ：超薄いノイズ感 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background-image: radial-gradient(
+      circle at 1px 1px,
+      rgba(180, 160, 120, 0.18) 1px,
+      transparent 0
+    );
+  background-size: 24px 24px;
+}
+
+main,
+form,
+header,
+section {
+  position: relative;
+  z-index: 1;
+}
+
+/* セクション見出しの縦線アクセント */
+.shu-bar {
+  position: relative;
+  padding-left: 1rem;
+}
+.shu-bar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.2em;
+  bottom: 0.2em;
+  width: 3px;
+  background-color: var(--shu);
+}
+
+/* セクション番号(漢数字)のスタイル */
+.section-num {
+  font-family: "Shippori Mincho B1", serif;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.15em;
+  color: var(--shu);
+}
+
+/* 落款風スタンプ */
+.hanko {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--shu);
+  color: var(--shu);
+  font-family: "Shippori Mincho B1", serif;
+  font-weight: 700;
+  border-radius: 4px;
+  background-color: rgba(184, 64, 58, 0.05);
+}
+
+/* フォーカス */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--shu);
+  outline-offset: 1px;
 }

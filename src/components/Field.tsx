@@ -13,15 +13,17 @@ export function Field({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-slate-700">
+      <span className="text-xs font-medium tracking-wide text-sumi-soft uppercase">
         {label}
-        {required && <span className="text-rose-600 ml-1">*</span>}
+        {required && <span className="ml-1 text-shu">*</span>}
       </span>
-      <div className="mt-1">{children}</div>
-      {error && <p className="mt-1 text-xs text-rose-600">{error}</p>}
+      <div className="mt-1.5">{children}</div>
+      {error && (
+        <p className="mt-1 text-xs text-shu-deep">{error}</p>
+      )}
     </label>
   );
 }
 
 export const inputClass =
-  "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500";
+  "w-full rounded-sm border border-kraft bg-nama-paper px-3 py-2 text-sm text-sumi placeholder:text-kraft-deep focus:border-shu focus:bg-white focus:outline-none transition-colors";

@@ -48,16 +48,16 @@ type SortKey = "c0" | "c1" | "c2" | "c3" | "c4" | "c9" | "c14" | "c8" | null;
 type SortDir = "asc" | "desc";
 
 const STATUS_COLOR: Record<string, string> = {
-  新規: "bg-sky-100 text-sky-800 border-sky-200",
-  対応中: "bg-amber-100 text-amber-800 border-amber-200",
-  保留: "bg-slate-100 text-slate-700 border-slate-200",
-  完了: "bg-emerald-100 text-emerald-800 border-emerald-200",
-  キャンセル: "bg-rose-100 text-rose-800 border-rose-200",
+  新規: "bg-shu-wash text-shu-deep border-shu",
+  対応中: "bg-nama-deep text-sumi border-kraft-deep",
+  保留: "bg-nama text-sumi-fade border-kraft",
+  完了: "bg-sumi text-nama border-sumi",
+  キャンセル: "bg-transparent text-sumi-fade border-kraft line-through",
 };
 
 function statusBadge(status: string) {
-  const cls = STATUS_COLOR[status] ?? "bg-slate-100 text-slate-700 border-slate-200";
-  return `inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${cls}`;
+  const cls = STATUS_COLOR[status] ?? "bg-nama text-sumi-fade border-kraft";
+  return `inline-flex items-center border px-2 py-0.5 text-xs font-medium tracking-wide ${cls}`;
 }
 
 function toDate(s: string): Date | null {
@@ -224,8 +224,8 @@ export function AdminClient() {
   }
 
   function sortIcon(key: NonNullable<SortKey>) {
-    if (sortKey !== key) return <span className="text-slate-300">⇅</span>;
-    return <span className="text-sky-600">{sortDir === "asc" ? "▲" : "▼"}</span>;
+    if (sortKey !== key) return <span className="text-kraft-deep">⇅</span>;
+    return <span className="text-shu">{sortDir === "asc" ? "▲" : "▼"}</span>;
   }
 
   function exportCsv() {
@@ -272,79 +272,89 @@ export function AdminClient() {
     { key: "c8", label: "キーパーソン" },
   ];
 
+  const inputCls =
+    "rounded-sm border border-kraft bg-nama-paper px-3 py-2 text-sm text-sumi focus:border-shu focus:outline-none";
+
   return (
-    <main className="mx-auto max-w-7xl px-4 py-6">
+    <main className="mx-auto max-w-7xl px-4 py-8">
       <Toast toast={toast} onClose={() => setToast(null)} />
 
-      <header className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">入居相談 管理画面</h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {rows ? `全 ${rows.length} 件` : ""}
-          </p>
+      <header className="mb-8">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className="hanko mt-0.5" aria-hidden>簿</div>
+            <div>
+              <p className="font-mincho text-[10px] tracking-widest text-shu uppercase">Admin / Records</p>
+              <h1 className="font-mincho text-2xl md:text-3xl font-bold text-sumi tracking-wide mt-0.5">
+                入居相談 管理簿
+              </h1>
+              <p className="text-xs text-sumi-fade mt-1">
+                {rows ? `全 ${rows.length} 件` : "読込中…"}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={exportCsv}
+              disabled={!rows || filtered.length === 0}
+              className="border border-kraft-deep bg-transparent px-3 py-1.5 text-xs text-sumi hover:bg-sumi hover:text-nama transition-colors disabled:opacity-50"
+            >
+              CSV出力
+            </button>
+            <button
+              onClick={load}
+              className="border border-kraft-deep bg-transparent px-3 py-1.5 text-xs text-sumi hover:bg-sumi hover:text-nama transition-colors"
+            >
+              再読み込み
+            </button>
+            <a
+              href="https://docs.google.com/spreadsheets/d/1y00PmqtKRCsyrvaH8ydO3QbzVbFXGEVA2dpKOUDJMaY/edit?gid=0#gid=0"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 border border-sumi bg-transparent px-3 py-1.5 text-xs text-sumi hover:bg-sumi hover:text-nama transition-colors"
+            >
+              記録簿を開く<span aria-hidden>↗</span>
+            </a>
+            <a
+              href="/"
+              className="font-mincho border border-sumi bg-sumi px-3 py-1.5 text-xs text-nama hover:bg-shu hover:border-shu transition-colors"
+            >
+              受付フォームへ →
+            </a>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={exportCsv}
-            disabled={!rows || filtered.length === 0}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-100 disabled:opacity-50"
-          >
-            CSV出力
-          </button>
-          <button
-            onClick={load}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-100"
-          >
-            再読み込み
-          </button>
-          <a
-            href="https://docs.google.com/spreadsheets/d/1y00PmqtKRCsyrvaH8ydO3QbzVbFXGEVA2dpKOUDJMaY/edit?gid=0#gid=0"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-100"
-          >
-            <span aria-hidden>📊</span>
-            スプレッドシート
-            <span aria-hidden className="text-emerald-600">↗</span>
-          </a>
-          <a
-            href="/"
-            className="rounded-md bg-sky-600 px-3 py-1.5 text-sm text-white hover:bg-sky-700"
-          >
-            受付フォームへ
-          </a>
-        </div>
+        <div className="mt-5 h-px bg-kraft" />
       </header>
 
       {rows && rows.length > 0 && (
-        <div className="mb-4 flex flex-wrap gap-2">
+        <div className="mb-5 flex flex-wrap gap-2">
           {Object.entries(statusCounts)
             .sort((a, b) => b[1] - a[1])
             .map(([s, n]) => (
               <button
                 key={s}
                 onClick={() => setStatus(status === s ? "" : s)}
-                className={`${statusBadge(s)} ${status === s ? "ring-2 ring-sky-400" : ""} cursor-pointer hover:opacity-80`}
+                className={`${statusBadge(s)} ${status === s ? "ring-1 ring-shu ring-offset-1 ring-offset-nama" : ""} cursor-pointer hover:opacity-80`}
                 title={`ステータス「${s}」で絞り込み`}
               >
-                {s}：{n}
+                {s}　{n}
               </button>
             ))}
         </div>
       )}
 
-      <div className="mb-4 rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+      <div className="mb-5 border border-kraft bg-nama-paper p-3">
         <div className="flex flex-wrap items-center gap-2">
           <input
-            placeholder="🔍 フリーワード検索（全列対象）"
+            placeholder="検索（全列対象）"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            className="flex-1 min-w-[240px] rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className={`flex-1 min-w-[240px] ${inputCls}`}
           />
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm"
+            className={inputCls}
           >
             <option value="">ステータス: すべて</option>
             {STATUS_OPTIONS.map((s) => (
@@ -354,82 +364,82 @@ export function AdminClient() {
           <select
             value={careLevel}
             onChange={(e) => setCareLevel(e.target.value)}
-            className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm"
+            className={inputCls}
           >
             <option value="">介護度: すべて</option>
             {["自立", "要支援1", "要支援2", "要介護1", "要介護2", "要介護3", "要介護4", "要介護5"].map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <div className="flex items-center gap-1 text-xs text-slate-600">
-            <span>問合せ日</span>
+          <div className="flex items-center gap-1 text-xs text-sumi-soft">
+            <span className="font-mincho">問合せ日</span>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-xs"
+              className="border border-kraft bg-nama-paper px-2 py-1.5 text-xs"
             />
-            <span>〜</span>
+            <span className="text-kraft-deep">〜</span>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-xs"
+              className="border border-kraft bg-nama-paper px-2 py-1.5 text-xs"
             />
           </div>
           <button
             onClick={resetFilters}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-100"
+            className="border border-kraft-deep bg-transparent px-3 py-1.5 text-xs text-sumi-fade hover:text-sumi"
           >
             条件クリア
           </button>
-          <span className="ml-auto text-xs text-slate-500">
+          <span className="ml-auto text-xs text-sumi-fade font-mincho">
             {rows ? `${filtered.length} / ${rows.length} 件` : ""}
           </span>
         </div>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+        <div className="mb-4 border border-shu bg-shu-wash p-3 text-sm text-shu-deep">
           {error}
         </div>
       )}
 
       {/* PC: テーブル */}
-      <div className="hidden md:block overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="hidden md:block overflow-x-auto border border-kraft bg-nama-paper">
         <table className="min-w-full text-sm">
-          <thead className="bg-slate-100 text-left text-xs text-slate-700 sticky top-0">
+          <thead className="bg-nama text-left text-xs text-sumi-soft tracking-wide sticky top-0 border-b border-kraft">
             <tr>
               {sortableHeaders.map((h) => (
-                <th key={h.key} className="px-2 py-2">
+                <th key={h.key} className="px-3 py-3 font-mincho font-bold">
                   <button
                     onClick={() => toggleSort(h.key)}
-                    className="inline-flex items-center gap-1 hover:text-sky-700"
+                    className="inline-flex items-center gap-1 hover:text-shu"
                   >
                     {h.label} {sortIcon(h.key)}
                   </button>
                 </th>
               ))}
-              <th className="px-2 py-2 text-right">操作</th>
+              <th className="px-3 py-3 font-mincho font-bold text-right">操作</th>
             </tr>
           </thead>
           <tbody>
             {loading && (
-              <tr><td colSpan={9} className="px-3 py-6 text-center text-slate-500">読み込み中…</td></tr>
+              <tr><td colSpan={9} className="px-3 py-8 text-center text-sumi-fade font-mincho">読み込み中…</td></tr>
             )}
             {!loading && rows && filtered.length === 0 && (
-              <tr><td colSpan={9} className="px-3 py-6 text-center text-slate-500">該当データがありません</td></tr>
+              <tr><td colSpan={9} className="px-3 py-8 text-center text-sumi-fade font-mincho">該当データがありません</td></tr>
             )}
             {filtered.map((r) => (
-              <tr key={r._rowNumber} className="border-t border-slate-100 hover:bg-sky-50/40 transition-colors">
-                <td className="px-2 py-2 whitespace-nowrap text-slate-500">{r.c0}</td>
-                <td className="px-2 py-2 whitespace-nowrap">{r.c1}</td>
-                <td className="px-2 py-2 whitespace-nowrap">
+              <tr key={r._rowNumber} className="border-t border-kraft hover:bg-nama transition-colors">
+                <td className="px-3 py-2.5 whitespace-nowrap font-mincho text-sumi-fade">{r.c0}</td>
+                <td className="px-3 py-2.5 whitespace-nowrap text-sumi-soft">{r.c1}</td>
+                <td className="px-3 py-2.5 whitespace-nowrap">
                   <select
                     value={r.c2 || ""}
                     onChange={(e) => quickStatusChange(r, e.target.value)}
                     disabled={updatingRow === r._rowNumber}
-                    className={`${statusBadge(r.c2)} cursor-pointer outline-none focus:ring-2 focus:ring-sky-400 disabled:opacity-50 bg-transparent`}
+                    className={`${statusBadge(r.c2)} cursor-pointer outline-none focus:ring-1 focus:ring-shu disabled:opacity-50`}
                     onClick={(e) => e.stopPropagation()}
                   >
                     {[...new Set([r.c2 || "新規", ...STATUS_OPTIONS])].map((s) => (
@@ -437,24 +447,24 @@ export function AdminClient() {
                     ))}
                   </select>
                 </td>
-                <td className="px-2 py-2 font-medium text-slate-900">{r.c3}</td>
-                <td className="px-2 py-2">{r.c4}</td>
-                <td className="px-2 py-2">{r.c9}</td>
-                <td className="px-2 py-2 whitespace-pre-line leading-tight">
+                <td className="px-3 py-2.5 font-mincho font-bold text-sumi">{r.c3}</td>
+                <td className="px-3 py-2.5 text-sumi-soft">{r.c4}</td>
+                <td className="px-3 py-2.5 text-sumi-soft">{r.c9}</td>
+                <td className="px-3 py-2.5 whitespace-pre-line leading-tight text-sumi-soft">
                   {String(r.c14 ?? "").replace(/円\s*まで/g, "円\nまで")}
                 </td>
-                <td className="px-2 py-2">{r.c8}</td>
-                <td className="px-2 py-2 text-right whitespace-nowrap">
+                <td className="px-3 py-2.5 text-sumi-soft">{r.c8}</td>
+                <td className="px-3 py-2.5 text-right whitespace-nowrap">
                   <div className="inline-flex gap-1">
                     <button
                       onClick={() => setDetail(r)}
-                      className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs hover:bg-slate-100"
+                      className="border border-kraft-deep bg-transparent px-2 py-1 text-xs text-sumi hover:bg-sumi hover:text-nama transition-colors"
                     >
                       詳細
                     </button>
                     <button
                       onClick={() => remove(r)}
-                      className="rounded-md border border-rose-300 bg-white px-2 py-1 text-xs text-rose-700 hover:bg-rose-50"
+                      className="border border-shu bg-transparent px-2 py-1 text-xs text-shu hover:bg-shu hover:text-nama transition-colors"
                       title="この行を削除"
                     >
                       削除
@@ -470,25 +480,25 @@ export function AdminClient() {
       {/* モバイル: カード */}
       <div className="md:hidden space-y-2">
         {loading && (
-          <p className="rounded-md bg-white p-4 text-center text-sm text-slate-500 shadow-sm">読み込み中…</p>
+          <p className="border border-kraft bg-nama-paper p-4 text-center text-sm text-sumi-fade font-mincho">読み込み中…</p>
         )}
         {!loading && rows && filtered.length === 0 && (
-          <p className="rounded-md bg-white p-4 text-center text-sm text-slate-500 shadow-sm">該当データがありません</p>
+          <p className="border border-kraft bg-nama-paper p-4 text-center text-sm text-sumi-fade font-mincho">該当データがありません</p>
         )}
         {filtered.map((r) => (
           <button
             key={r._rowNumber}
             onClick={() => setDetail(r)}
-            className="w-full text-left rounded-lg border border-slate-200 bg-white p-3 shadow-sm hover:border-sky-400"
+            className="w-full text-left border border-kraft bg-nama-paper p-4 hover:border-shu transition-colors"
           >
             <div className="flex items-center justify-between gap-2">
-              <span className="text-xs text-slate-500">No.{r.c0} · {r.c1}</span>
+              <span className="text-xs text-sumi-fade font-mincho">No.{r.c0} · {r.c1}</span>
               <span className={statusBadge(r.c2)}>{r.c2 || "—"}</span>
             </div>
-            <div className="mt-1 text-base font-semibold text-slate-900">
-              {r.c3 || "(無名)"} <span className="text-xs font-normal text-slate-500">{r.c4} {r.c5}</span>
+            <div className="mt-1.5 font-mincho text-lg font-bold text-sumi">
+              {r.c3 || "(無名)"} <span className="text-xs font-normal text-sumi-fade ml-1">{r.c4} {r.c5}</span>
             </div>
-            <div className="mt-0.5 text-xs text-slate-600">
+            <div className="mt-1 text-xs text-sumi-soft">
               {r.c9} · {String(r.c14 ?? "").replace(/円\s*まで/g, "円 / まで")}
             </div>
           </button>
@@ -573,23 +583,27 @@ function DetailModal({
     if (ok) setEditing(false);
   }
 
+  const editInputCls =
+    "mt-1 w-full rounded-sm border border-kraft bg-nama-paper px-3 py-2 text-sm focus:border-shu focus:bg-white focus:outline-none";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-sumi/60 p-4" onClick={onClose}>
       <div
-        className="max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-xl bg-white shadow-2xl flex flex-col"
+        className="max-h-[90vh] w-full max-w-3xl overflow-hidden border border-sumi bg-nama-paper shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+        <div className="border-b border-kraft px-6 py-4 flex items-center justify-between bg-nama">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">{draft.c3 || "(無名)"} の詳細</h2>
-            <p className="text-xs text-slate-500">行 {row._rowNumber} · No.{draft.c0}</p>
+            <p className="font-mincho text-[10px] tracking-widest text-shu uppercase">Record</p>
+            <h2 className="font-mincho text-lg font-bold text-sumi mt-0.5">{draft.c3 || "(無名)"}</h2>
+            <p className="text-xs text-sumi-fade mt-0.5">行 {row._rowNumber} · No.{draft.c0}</p>
           </div>
-          <button onClick={onClose} className="text-slate-500 hover:text-slate-900">✕</button>
+          <button onClick={onClose} className="text-sumi-fade hover:text-sumi text-xl" aria-label="閉じる">×</button>
         </div>
 
         <div className="overflow-auto px-6 py-4 flex-1">
           {!editing ? (
-            <pre className="whitespace-pre-wrap rounded-md bg-slate-50 p-4 text-xs text-slate-800 border border-slate-200">
+            <pre className="whitespace-pre-wrap border border-kraft bg-nama p-4 text-xs text-sumi leading-relaxed">
               {buildText(draft)}
             </pre>
           ) : (
@@ -599,19 +613,19 @@ function DetailModal({
                 const isLong = label === "ADL詳細" || label === "その他、備考";
                 return (
                   <label key={k} className="block">
-                    <span className="text-xs font-medium text-slate-600">{label}</span>
+                    <span className="text-xs font-medium uppercase tracking-wide text-sumi-soft">{label}</span>
                     {isLong ? (
                       <textarea
                         rows={4}
                         value={draft[k] ?? ""}
                         onChange={(e) => setDraft({ ...draft, [k]: e.target.value })}
-                        className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                        className={editInputCls}
                       />
                     ) : (
                       <input
                         value={draft[k] ?? ""}
                         onChange={(e) => setDraft({ ...draft, [k]: e.target.value })}
-                        className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                        className={editInputCls}
                       />
                     )}
                   </label>
@@ -621,16 +635,16 @@ function DetailModal({
           )}
         </div>
 
-        <div className="border-t border-slate-200 px-6 py-3 flex flex-wrap justify-end gap-2 bg-slate-50">
+        <div className="border-t border-kraft px-6 py-3 flex flex-wrap justify-end gap-2 bg-nama">
           {!editing ? (
             <>
-              <button onClick={copy} className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-100">
+              <button onClick={copy} className="border border-kraft-deep bg-transparent px-3 py-1.5 text-sm text-sumi hover:bg-sumi hover:text-nama transition-colors">
                 テンプレ形式でコピー
               </button>
-              <button onClick={() => setEditing(true)} className="rounded-md bg-sky-600 px-3 py-1.5 text-sm text-white hover:bg-sky-700">
+              <button onClick={() => setEditing(true)} className="border border-sumi bg-sumi px-3 py-1.5 text-sm text-nama hover:bg-shu hover:border-shu transition-colors">
                 編集
               </button>
-              <button onClick={onDelete} className="rounded-md bg-rose-600 px-3 py-1.5 text-sm text-white hover:bg-rose-700">
+              <button onClick={onDelete} className="border border-shu bg-transparent px-3 py-1.5 text-sm text-shu hover:bg-shu hover:text-nama transition-colors">
                 削除
               </button>
             </>
@@ -647,16 +661,16 @@ function DetailModal({
                   setEditing(false);
                 }}
                 disabled={saving}
-                className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-100 disabled:opacity-50"
+                className="border border-kraft-deep bg-transparent px-3 py-1.5 text-sm text-sumi-fade hover:text-sumi disabled:opacity-50"
               >
                 キャンセル
               </button>
               <button
                 onClick={save}
                 disabled={saving}
-                className="inline-flex items-center gap-2 rounded-md bg-sky-600 px-4 py-1.5 text-sm text-white hover:bg-sky-700 disabled:opacity-60"
+                className="font-mincho inline-flex items-center gap-2 border border-sumi bg-sumi px-4 py-1.5 text-sm font-bold text-nama hover:bg-shu hover:border-shu transition-colors disabled:opacity-60"
               >
-                {saving && <span className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />}
+                {saving && <span className="h-3 w-3 animate-spin rounded-full border-2 border-nama border-t-transparent" />}
                 保存
               </button>
             </>
