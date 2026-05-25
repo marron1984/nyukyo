@@ -61,7 +61,7 @@ function formToRow_(p, nextNo) {
     if (v === undefined || v === null || v === '') return '';
     var n = Number(v);
     if (isNaN(n)) return String(v);
-    return n.toLocaleString('ja-JP') + '円まで';
+    return n.toLocaleString('ja-JP') + '円\nまで';
   }
   function fmtAge(v) {
     if (v === undefined || v === null || v === '') return '';

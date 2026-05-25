@@ -440,7 +440,9 @@ export function AdminClient() {
                 <td className="px-2 py-2 font-medium text-slate-900">{r.c3}</td>
                 <td className="px-2 py-2">{r.c4}</td>
                 <td className="px-2 py-2">{r.c9}</td>
-                <td className="px-2 py-2 whitespace-nowrap">{r.c14}</td>
+                <td className="px-2 py-2 whitespace-pre-line leading-tight">
+                  {String(r.c14 ?? "").replace(/円\s*まで/g, "円\nまで")}
+                </td>
                 <td className="px-2 py-2">{r.c8}</td>
                 <td className="px-2 py-2 text-right whitespace-nowrap">
                   <div className="inline-flex gap-1">
@@ -487,7 +489,7 @@ export function AdminClient() {
               {r.c3 || "(無名)"} <span className="text-xs font-normal text-slate-500">{r.c4} {r.c5}</span>
             </div>
             <div className="mt-0.5 text-xs text-slate-600">
-              {r.c9} · {r.c14}
+              {r.c9} · {String(r.c14 ?? "").replace(/円\s*まで/g, "円 / まで")}
             </div>
           </button>
         ))}
