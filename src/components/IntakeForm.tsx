@@ -11,7 +11,7 @@ import {
 } from "@/lib/schema";
 import { parseIntakeText } from "@/lib/parse";
 import { formatIntakeMessage } from "@/lib/format";
-import { SAMPLE_INTAKE_TEXT } from "@/lib/sample";
+import { SAMPLE_INTAKE_TEXT, EMPTY_INTAKE_TEMPLATE } from "@/lib/sample";
 import { Field, inputClass } from "./Field";
 import { Toast, type ToastState } from "./Toast";
 
@@ -81,6 +81,34 @@ export function IntakeForm() {
     applyParsed(SAMPLE_INTAKE_TEXT);
   }
 
+  function downloadTemplate() {
+    const bom = "﻿";
+    const blob = new Blob([bom + EMPTY_INTAKE_TEMPLATE], {
+      type: "text/plain;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "入居相談テンプレート.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setToast({
+      kind: "success",
+      message: "テンプレートをダウンロードしました",
+    });
+  }
+
+  async function copyTemplate() {
+    try {
+      await navigator.clipboard.writeText(EMPTY_INTAKE_TEMPLATE);
+      setToast({ kind: "success", message: "テンプレートをコピーしました" });
+    } catch {
+      setToast({ kind: "error", message: "コピーに失敗しました" });
+    }
+  }
+
   function clearPaste() {
     setPasteText("");
     setPasteInfo(null);
@@ -134,6 +162,54 @@ export function IntakeForm() {
       <Toast toast={toast} onClose={() => setToast(null)} />
 
       <form onSubmit={handleSubmit(onValid, onInvalid)} className="space-y-6 pb-24">
+        <section className="rounded-xl border border-indigo-200 bg-indigo-50/60 p-5 space-y-3 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-indigo-600 text-white text-sm">
+                📄
+              </span>
+              <h2 className="text-base font-semibold text-indigo-900">
+                フォーマットをダウンロード
+              </h2>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={copyTemplate}
+                className="rounded-md border border-indigo-300 bg-white px-3 py-1.5 text-xs font-medium text-indigo-800 hover:bg-indigo-100"
+              >
+                📋 コピー
+              </button>
+              <button
+                type="button"
+                onClick={downloadTemplate}
+                className="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-indigo-700"
+              >
+                ⬇ ダウンロード(.txt)
+              </button>
+            </div>
+          </div>
+          <p className="text-xs text-indigo-900 leading-relaxed">
+            空のテンプレートをダウンロードできます。<strong>Claude / ChatGPT / Gemini</strong>などのAIに、聞き取り内容や音声書き起こしと一緒に渡して内容を埋めてもらい、完成したテキストを下の「テンプレ貼り付け」エリアに貼り付けてください。
+          </p>
+          <details className="text-xs text-indigo-900">
+            <summary className="cursor-pointer font-medium hover:text-indigo-700">
+              AIへの依頼文の例(クリックで展開)
+            </summary>
+            <pre className="mt-2 whitespace-pre-wrap rounded-md bg-white border border-indigo-200 p-3 font-mono text-[11px] text-slate-800">
+{`以下のテンプレートを、添付した音声書き起こし(または聞き取りメモ)の内容で埋めてください。
+- 記載がない項目は空欄のまま
+- 介護度は「自立 / 要支援1 / 要支援2 / 要介護1〜5」のいずれか
+- 性別は「男性 / 女性 / その他」
+- 費用は数字のみ(例: 140000)
+
+[ここに上のテンプレートを貼り付け]
+
+[ここに音声書き起こしを貼り付け]`}
+            </pre>
+          </details>
+        </section>
+
         <section className="rounded-xl border border-sky-200 bg-sky-50/70 p-5 space-y-3 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
