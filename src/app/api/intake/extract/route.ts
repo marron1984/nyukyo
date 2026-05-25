@@ -7,11 +7,15 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const headerKey = req.headers.get("x-anthropic-api-key")?.trim();
+  const apiKey = headerKey || process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: "ANTHROPIC_API_KEY が設定されていません" },
-      { status: 500 },
+      {
+        error:
+          "APIキーが設定されていません。画面右上の「API設定」から登録してください。",
+      },
+      { status: 401 },
     );
   }
 
