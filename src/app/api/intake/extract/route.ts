@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { jsonSchemaOutputFormat } from "@anthropic-ai/sdk/helpers/json-schema";
 import { EXTRACTION_SYSTEM_PROMPT, extractJsonSchema } from "@/lib/extract";
 
 export const runtime = "nodejs";
@@ -32,13 +31,23 @@ export async function POST(req: Request) {
 
     const client = new Anthropic({ apiKey });
 
+    // Tool use 方式で構造化出力を強制（structured outputsの初回スキーマ
+    // コンパイル遅延を回避してVercelのタイムアウト内に収める）
     let response;
     try {
-      response = await client.messages.parse({
+      response = await client.messages.create({
         model: "claude-haiku-4-5",
-        max_tokens: 4096,
+        max_tokens: 2048,
         system: EXTRACTION_SYSTEM_PROMPT,
-        output_config: { format: jsonSchemaOutputFormat(extractJsonSchema) },
+        tools: [
+          {
+            name: "record_intake",
+            description:
+              "抽出した入居相談の情報を構造化データとして記録する。見つからなかった項目はプロパティごと省略する。",
+            input_schema: extractJsonSchema as Anthropic.Messages.Tool.InputSchema,
+          },
+        ],
+        tool_choice: { type: "tool", name: "record_intake" },
         messages: [
           {
             role: "user",
@@ -57,9 +66,7 @@ export async function POST(req: Request) {
         );
       }
       if (e instanceof Anthropic.APIError) {
-        return errJson(`AI抽出に失敗しました: ${e.message}`, e.status ?? 502, {
-          api_status: e.status,
-        });
+        return errJson(`AI抽出に失敗しました: ${e.message}`, e.status ?? 502);
       }
       console.error("[extract] SDK error:", e);
       return errJson(
@@ -68,18 +75,18 @@ export async function POST(req: Request) {
       );
     }
 
-    const parsed = response.parsed_output;
-    if (!parsed) {
-      return errJson(
-        "AIから構造化データを取得できませんでした",
-        502,
-        { stop_reason: response.stop_reason },
-      );
+    const toolUse = response.content.find(
+      (b): b is Anthropic.Messages.ToolUseBlock => b.type === "tool_use",
+    );
+    if (!toolUse) {
+      return errJson("AIが構造化データを返しませんでした", 502, {
+        stop_reason: response.stop_reason,
+      });
     }
 
     return NextResponse.json({
       ok: true,
-      data: parsed,
+      data: toolUse.input as Record<string, unknown>,
       usage: response.usage,
     });
   } catch (e) {
