@@ -33,6 +33,8 @@ const INITIAL_VALUES: Partial<IntakeFormType> = {
   contactPerson: "未確認",
 };
 
+type InputMode = "template" | "ai";
+
 export function IntakeForm() {
   const [toast, setToast] = useState<ToastState>(null);
   const [pasteText, setPasteText] = useState("");
@@ -40,6 +42,8 @@ export function IntakeForm() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingValues, setPendingValues] = useState<IntakeFormType | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [mode, setMode] = useState<InputMode>("template");
+  const [extracting, setExtracting] = useState(false);
 
   const {
     register,
@@ -84,6 +88,47 @@ export function IntakeForm() {
   function clearPaste() {
     setPasteText("");
     setPasteInfo(null);
+  }
+
+  async function extractWithAI(text: string) {
+    if (!text.trim()) {
+      setPasteInfo("抽出するテキストがありません");
+      return;
+    }
+    setExtracting(true);
+    setPasteInfo("AI抽出中…");
+    try {
+      const res = await fetch("/api/intake/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) {
+        const msg = json?.error ?? "AI抽出に失敗しました";
+        setPasteInfo(msg);
+        setToast({ kind: "error", message: msg });
+        return;
+      }
+      const data = json.data as Record<string, unknown>;
+      let count = 0;
+      Object.entries(data).forEach(([k, v]) => {
+        if (v === undefined || v === null || v === "") return;
+        setValue(k as keyof IntakeFormType, v as never, {
+          shouldDirty: true,
+          shouldValidate: false,
+        });
+        count++;
+      });
+      setPasteInfo(`AIが${count}項目を抽出しました`);
+      setToast({ kind: "success", message: `AIが${count}項目を抽出しました` });
+    } catch (e) {
+      const msg = (e as Error).message ?? "通信エラー";
+      setPasteInfo(msg);
+      setToast({ kind: "error", message: msg });
+    } finally {
+      setExtracting(false);
+    }
   }
 
   function resetAll() {
@@ -138,20 +183,47 @@ export function IntakeForm() {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-sky-600 text-white text-sm">
-                ↧
+                {mode === "ai" ? "✨" : "↧"}
               </span>
               <h2 className="text-base font-semibold text-sky-900">
-                テンプレ貼り付け（自動入力）
+                {mode === "ai" ? "AI抽出（音声書き起こし・自由文）" : "テンプレ貼り付け（自動入力）"}
               </h2>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="inline-flex rounded-md border border-sky-300 bg-white p-0.5 text-xs">
               <button
                 type="button"
-                onClick={loadSample}
-                className="rounded-md border border-sky-300 bg-white px-3 py-1.5 text-xs font-medium text-sky-800 hover:bg-sky-100"
+                onClick={() => setMode("template")}
+                className={`rounded px-2.5 py-1 ${mode === "template" ? "bg-sky-600 text-white" : "text-sky-800 hover:bg-sky-50"}`}
               >
-                サンプル投入
+                テンプレ
               </button>
+              <button
+                type="button"
+                onClick={() => setMode("ai")}
+                className={`rounded px-2.5 py-1 ${mode === "ai" ? "bg-indigo-600 text-white" : "text-sky-800 hover:bg-sky-50"}`}
+              >
+                ✨ AI抽出
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs text-sky-800 max-w-[60ch]">
+              {mode === "ai" ? (
+                <>音声書き起こしや自由なメモを貼り付けて<strong>「AIで抽出」</strong>を押すと、Claude が各項目を抽出して反映します。</>
+              ) : (
+                <>定型テキストを貼ると<strong>自動で各項目に反映</strong>されます。</>
+              )}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {mode === "template" && (
+                <button
+                  type="button"
+                  onClick={loadSample}
+                  className="rounded-md border border-sky-300 bg-white px-3 py-1.5 text-xs font-medium text-sky-800 hover:bg-sky-100"
+                >
+                  サンプル投入
+                </button>
+              )}
               <button
                 type="button"
                 onClick={clearPaste}
@@ -159,25 +231,41 @@ export function IntakeForm() {
               >
                 クリア
               </button>
-              <button
-                type="button"
-                onClick={() => applyParsed(pasteText)}
-                className="rounded-md bg-sky-600 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-sky-700"
-              >
-                反映
-              </button>
+              {mode === "template" ? (
+                <button
+                  type="button"
+                  onClick={() => applyParsed(pasteText)}
+                  className="rounded-md bg-sky-600 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-sky-700"
+                >
+                  反映
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => extractWithAI(pasteText)}
+                  disabled={extracting || !pasteText.trim()}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-indigo-700 disabled:opacity-50"
+                >
+                  {extracting && (
+                    <span className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  )}
+                  {extracting ? "AI抽出中…" : "✨ AIで抽出"}
+                </button>
+              )}
             </div>
           </div>
-          <p className="text-xs text-sky-800">
-            テキストを下のエリアに貼り付けると<strong>自動で各項目に反映</strong>されます。手で編集してから「反映」を押し直すことも可能です。
-          </p>
           <textarea
-            rows={8}
+            rows={mode === "ai" ? 10 : 8}
             className={`${inputClass} font-mono text-xs`}
-            placeholder={"【問い合わせ日】2026年5月21日\n【顧客名（イニシャル可）】鈴木一世様\n…"}
+            placeholder={
+              mode === "ai"
+                ? "例：78歳男性の鈴木さん。要介護2で、奥様がキーパーソン。\n大阪市鶴見区在住で予算は月14万まで。借金なし。\n座位・立位・排泄・食事は自立だが意思疎通に波あり…"
+                : "【問い合わせ日】2026年5月21日\n【顧客名（イニシャル可）】鈴木一世様\n…"
+            }
             value={pasteText}
             onChange={(e) => setPasteText(e.target.value)}
             onPaste={(e) => {
+              if (mode === "ai") return;
               const t = e.clipboardData.getData("text");
               if (!t) return;
               e.preventDefault();
