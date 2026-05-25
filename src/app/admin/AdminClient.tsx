@@ -48,15 +48,15 @@ type SortKey = "c0" | "c1" | "c2" | "c3" | "c4" | "c9" | "c14" | "c8" | null;
 type SortDir = "asc" | "desc";
 
 const STATUS_COLOR: Record<string, string> = {
-  新規: "bg-shu-wash text-shu-deep border-shu",
-  対応中: "bg-nama-deep text-sumi border-kraft-deep",
-  保留: "bg-nama text-sumi-fade border-kraft",
-  完了: "bg-sumi text-nama border-sumi",
-  キャンセル: "bg-transparent text-sumi-fade border-kraft line-through",
+  新規: "bg-yolk-wash text-ink border-ink",
+  対応中: "bg-paper-off text-ink border-ink",
+  保留: "bg-paper text-ink-fade border-ink",
+  完了: "bg-ink text-paper border-ink",
+  キャンセル: "bg-transparent text-ink-fade border-ink line-through",
 };
 
 function statusBadge(status: string) {
-  const cls = STATUS_COLOR[status] ?? "bg-nama text-sumi-fade border-kraft";
+  const cls = STATUS_COLOR[status] ?? "bg-paper text-ink-fade border-ink";
   return `inline-flex items-center border px-2 py-0.5 text-xs font-medium tracking-wide ${cls}`;
 }
 
@@ -224,8 +224,8 @@ export function AdminClient() {
   }
 
   function sortIcon(key: NonNullable<SortKey>) {
-    if (sortKey !== key) return <span className="text-kraft-deep">⇅</span>;
-    return <span className="text-shu">{sortDir === "asc" ? "▲" : "▼"}</span>;
+    if (sortKey !== key) return <span className="text-ink-mute">⇅</span>;
+    return <span className="text-ink">{sortDir === "asc" ? "▲" : "▼"}</span>;
   }
 
   function exportCsv() {
@@ -273,7 +273,7 @@ export function AdminClient() {
   ];
 
   const inputCls =
-    "rounded-sm border border-kraft bg-nama-paper px-3 py-2 text-sm text-sumi focus:border-shu focus:outline-none";
+    "rounded-sm border border-ink bg-paper px-3 py-2 text-sm text-ink focus:border-ink focus:outline-none";
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8">
@@ -282,13 +282,13 @@ export function AdminClient() {
       <header className="mb-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-start gap-3">
-            <div className="hanko mt-0.5" aria-hidden>簿</div>
+            <div className="box-outline w-9 h-9 flex items-center justify-center font-mincho font-bold text-ink" aria-hidden>簿</div>
             <div>
-              <p className="font-mincho text-[10px] tracking-widest text-shu uppercase">Admin / Records</p>
-              <h1 className="font-mincho text-2xl md:text-3xl font-bold text-sumi tracking-wide mt-0.5">
+              <p className="font-mincho text-[10px] tracking-widest text-ink uppercase">Admin / Records</p>
+              <h1 className="font-mincho text-2xl md:text-3xl font-bold text-ink tracking-wide mt-0.5">
                 入居相談 管理簿
               </h1>
-              <p className="text-xs text-sumi-fade mt-1">
+              <p className="text-xs text-ink-fade mt-1">
                 {rows ? `全 ${rows.length} 件` : "読込中…"}
               </p>
             </div>
@@ -297,13 +297,13 @@ export function AdminClient() {
             <button
               onClick={exportCsv}
               disabled={!rows || filtered.length === 0}
-              className="border border-kraft-deep bg-transparent px-3 py-1.5 text-xs text-sumi hover:bg-sumi hover:text-nama transition-colors disabled:opacity-50"
+              className="border border-ink bg-transparent px-3 py-1.5 text-xs text-ink hover:bg-ink hover:text-paper transition-colors disabled:opacity-50"
             >
               CSV出力
             </button>
             <button
               onClick={load}
-              className="border border-kraft-deep bg-transparent px-3 py-1.5 text-xs text-sumi hover:bg-sumi hover:text-nama transition-colors"
+              className="border border-ink bg-transparent px-3 py-1.5 text-xs text-ink hover:bg-ink hover:text-paper transition-colors"
             >
               再読み込み
             </button>
@@ -311,13 +311,13 @@ export function AdminClient() {
               href="https://docs.google.com/spreadsheets/d/1y00PmqtKRCsyrvaH8ydO3QbzVbFXGEVA2dpKOUDJMaY/edit?gid=0#gid=0"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 border border-sumi bg-transparent px-3 py-1.5 text-xs text-sumi hover:bg-sumi hover:text-nama transition-colors"
+              className="inline-flex items-center gap-1 border border-ink bg-transparent px-3 py-1.5 text-xs text-ink hover:bg-ink hover:text-paper transition-colors"
             >
               記録簿を開く<span aria-hidden>↗</span>
             </a>
             <a
               href="/"
-              className="font-mincho border border-sumi bg-sumi px-3 py-1.5 text-xs text-nama hover:bg-shu hover:border-shu transition-colors"
+              className="font-mincho border border-ink bg-ink px-3 py-1.5 text-xs text-paper hover:bg-yolk hover:border-ink transition-colors"
             >
               受付フォームへ →
             </a>
@@ -343,7 +343,7 @@ export function AdminClient() {
         </div>
       )}
 
-      <div className="mb-5 border border-kraft bg-nama-paper p-3">
+      <div className="mb-5 border border-ink bg-paper p-3">
         <div className="flex flex-wrap items-center gap-2">
           <input
             placeholder="検索（全列対象）"
@@ -371,50 +371,50 @@ export function AdminClient() {
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <div className="flex items-center gap-1 text-xs text-sumi-soft">
+          <div className="flex items-center gap-1 text-xs text-ink-soft">
             <span className="font-mincho">問合せ日</span>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="border border-kraft bg-nama-paper px-2 py-1.5 text-xs"
+              className="border border-ink bg-paper px-2 py-1.5 text-xs"
             />
-            <span className="text-kraft-deep">〜</span>
+            <span className="text-ink-mute">〜</span>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="border border-kraft bg-nama-paper px-2 py-1.5 text-xs"
+              className="border border-ink bg-paper px-2 py-1.5 text-xs"
             />
           </div>
           <button
             onClick={resetFilters}
-            className="border border-kraft-deep bg-transparent px-3 py-1.5 text-xs text-sumi-fade hover:text-sumi"
+            className="border border-ink bg-transparent px-3 py-1.5 text-xs text-ink-fade hover:text-ink"
           >
             条件クリア
           </button>
-          <span className="ml-auto text-xs text-sumi-fade font-mincho">
+          <span className="ml-auto text-xs text-ink-fade font-mincho">
             {rows ? `${filtered.length} / ${rows.length} 件` : ""}
           </span>
         </div>
       </div>
 
       {error && (
-        <div className="mb-4 border border-shu bg-shu-wash p-3 text-sm text-shu-deep">
+        <div className="mb-4 border border-ink bg-yolk-wash p-3 text-sm text-ink">
           {error}
         </div>
       )}
 
       {/* PC: テーブル */}
-      <div className="hidden md:block overflow-x-auto border border-kraft bg-nama-paper">
+      <div className="hidden md:block overflow-x-auto border border-ink bg-paper">
         <table className="min-w-full text-sm">
-          <thead className="bg-nama text-left text-xs text-sumi-soft tracking-wide sticky top-0 border-b border-kraft">
+          <thead className="bg-paper text-left text-xs text-ink-soft tracking-wide sticky top-0 border-b border-ink">
             <tr>
               {sortableHeaders.map((h) => (
                 <th key={h.key} className="px-3 py-3 font-mincho font-bold">
                   <button
                     onClick={() => toggleSort(h.key)}
-                    className="inline-flex items-center gap-1 hover:text-shu"
+                    className="inline-flex items-center gap-1 hover:text-ink"
                   >
                     {h.label} {sortIcon(h.key)}
                   </button>
@@ -425,15 +425,15 @@ export function AdminClient() {
           </thead>
           <tbody>
             {loading && (
-              <tr><td colSpan={9} className="px-3 py-8 text-center text-sumi-fade font-mincho">読み込み中…</td></tr>
+              <tr><td colSpan={9} className="px-3 py-8 text-center text-ink-fade font-mincho">読み込み中…</td></tr>
             )}
             {!loading && rows && filtered.length === 0 && (
-              <tr><td colSpan={9} className="px-3 py-8 text-center text-sumi-fade font-mincho">該当データがありません</td></tr>
+              <tr><td colSpan={9} className="px-3 py-8 text-center text-ink-fade font-mincho">該当データがありません</td></tr>
             )}
             {filtered.map((r) => (
-              <tr key={r._rowNumber} className="border-t border-kraft hover:bg-nama transition-colors">
-                <td className="px-3 py-2.5 whitespace-nowrap font-mincho text-sumi-fade">{r.c0}</td>
-                <td className="px-3 py-2.5 whitespace-nowrap text-sumi-soft">{r.c1}</td>
+              <tr key={r._rowNumber} className="border-t border-ink hover:bg-paper transition-colors">
+                <td className="px-3 py-2.5 whitespace-nowrap font-mincho text-ink-fade">{r.c0}</td>
+                <td className="px-3 py-2.5 whitespace-nowrap text-ink-soft">{r.c1}</td>
                 <td className="px-3 py-2.5 whitespace-nowrap">
                   <select
                     value={r.c2 || ""}
@@ -447,24 +447,24 @@ export function AdminClient() {
                     ))}
                   </select>
                 </td>
-                <td className="px-3 py-2.5 font-mincho font-bold text-sumi">{r.c3}</td>
-                <td className="px-3 py-2.5 text-sumi-soft">{r.c4}</td>
-                <td className="px-3 py-2.5 text-sumi-soft">{r.c9}</td>
-                <td className="px-3 py-2.5 whitespace-pre-line leading-tight text-sumi-soft">
+                <td className="px-3 py-2.5 font-mincho font-bold text-ink">{r.c3}</td>
+                <td className="px-3 py-2.5 text-ink-soft">{r.c4}</td>
+                <td className="px-3 py-2.5 text-ink-soft">{r.c9}</td>
+                <td className="px-3 py-2.5 whitespace-pre-line leading-tight text-ink-soft">
                   {String(r.c14 ?? "").replace(/円\s*まで/g, "円\nまで")}
                 </td>
-                <td className="px-3 py-2.5 text-sumi-soft">{r.c8}</td>
+                <td className="px-3 py-2.5 text-ink-soft">{r.c8}</td>
                 <td className="px-3 py-2.5 text-right whitespace-nowrap">
                   <div className="inline-flex gap-1">
                     <button
                       onClick={() => setDetail(r)}
-                      className="border border-kraft-deep bg-transparent px-2 py-1 text-xs text-sumi hover:bg-sumi hover:text-nama transition-colors"
+                      className="border border-ink bg-transparent px-2 py-1 text-xs text-ink hover:bg-ink hover:text-paper transition-colors"
                     >
                       詳細
                     </button>
                     <button
                       onClick={() => remove(r)}
-                      className="border border-shu bg-transparent px-2 py-1 text-xs text-shu hover:bg-shu hover:text-nama transition-colors"
+                      className="border border-ink bg-transparent px-2 py-1 text-xs text-ink hover:bg-yolk hover:text-paper transition-colors"
                       title="この行を削除"
                     >
                       削除
@@ -480,25 +480,25 @@ export function AdminClient() {
       {/* モバイル: カード */}
       <div className="md:hidden space-y-2">
         {loading && (
-          <p className="border border-kraft bg-nama-paper p-4 text-center text-sm text-sumi-fade font-mincho">読み込み中…</p>
+          <p className="border border-ink bg-paper p-4 text-center text-sm text-ink-fade font-mincho">読み込み中…</p>
         )}
         {!loading && rows && filtered.length === 0 && (
-          <p className="border border-kraft bg-nama-paper p-4 text-center text-sm text-sumi-fade font-mincho">該当データがありません</p>
+          <p className="border border-ink bg-paper p-4 text-center text-sm text-ink-fade font-mincho">該当データがありません</p>
         )}
         {filtered.map((r) => (
           <button
             key={r._rowNumber}
             onClick={() => setDetail(r)}
-            className="w-full text-left border border-kraft bg-nama-paper p-4 hover:border-shu transition-colors"
+            className="w-full text-left border border-ink bg-paper p-4 hover:border-ink transition-colors"
           >
             <div className="flex items-center justify-between gap-2">
-              <span className="text-xs text-sumi-fade font-mincho">No.{r.c0} · {r.c1}</span>
+              <span className="text-xs text-ink-fade font-mincho">No.{r.c0} · {r.c1}</span>
               <span className={statusBadge(r.c2)}>{r.c2 || "—"}</span>
             </div>
-            <div className="mt-1.5 font-mincho text-lg font-bold text-sumi">
-              {r.c3 || "(無名)"} <span className="text-xs font-normal text-sumi-fade ml-1">{r.c4} {r.c5}</span>
+            <div className="mt-1.5 font-mincho text-lg font-bold text-ink">
+              {r.c3 || "(無名)"} <span className="text-xs font-normal text-ink-fade ml-1">{r.c4} {r.c5}</span>
             </div>
-            <div className="mt-1 text-xs text-sumi-soft">
+            <div className="mt-1 text-xs text-ink-soft">
               {r.c9} · {String(r.c14 ?? "").replace(/円\s*まで/g, "円 / まで")}
             </div>
           </button>
@@ -584,26 +584,26 @@ function DetailModal({
   }
 
   const editInputCls =
-    "mt-1 w-full rounded-sm border border-kraft bg-nama-paper px-3 py-2 text-sm focus:border-shu focus:bg-white focus:outline-none";
+    "mt-1 w-full rounded-sm border border-ink bg-paper px-3 py-2 text-sm focus:border-ink focus:bg-white focus:outline-none";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-sumi/60 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4" onClick={onClose}>
       <div
-        className="max-h-[90vh] w-full max-w-3xl overflow-hidden border border-sumi bg-nama-paper shadow-2xl flex flex-col"
+        className="max-h-[90vh] w-full max-w-3xl overflow-hidden border border-ink bg-paper shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="border-b border-kraft px-6 py-4 flex items-center justify-between bg-nama">
+        <div className="border-b border-ink px-6 py-4 flex items-center justify-between bg-paper">
           <div>
-            <p className="font-mincho text-[10px] tracking-widest text-shu uppercase">Record</p>
-            <h2 className="font-mincho text-lg font-bold text-sumi mt-0.5">{draft.c3 || "(無名)"}</h2>
-            <p className="text-xs text-sumi-fade mt-0.5">行 {row._rowNumber} · No.{draft.c0}</p>
+            <p className="font-mincho text-[10px] tracking-widest text-ink uppercase">Record</p>
+            <h2 className="font-mincho text-lg font-bold text-ink mt-0.5">{draft.c3 || "(無名)"}</h2>
+            <p className="text-xs text-ink-fade mt-0.5">行 {row._rowNumber} · No.{draft.c0}</p>
           </div>
-          <button onClick={onClose} className="text-sumi-fade hover:text-sumi text-xl" aria-label="閉じる">×</button>
+          <button onClick={onClose} className="text-ink-fade hover:text-ink text-xl" aria-label="閉じる">×</button>
         </div>
 
         <div className="overflow-auto px-6 py-4 flex-1">
           {!editing ? (
-            <pre className="whitespace-pre-wrap border border-kraft bg-nama p-4 text-xs text-sumi leading-relaxed">
+            <pre className="whitespace-pre-wrap border border-ink bg-paper p-4 text-xs text-ink leading-relaxed">
               {buildText(draft)}
             </pre>
           ) : (
@@ -613,7 +613,7 @@ function DetailModal({
                 const isLong = label === "ADL詳細" || label === "その他、備考";
                 return (
                   <label key={k} className="block">
-                    <span className="text-xs font-medium uppercase tracking-wide text-sumi-soft">{label}</span>
+                    <span className="text-xs font-medium uppercase tracking-wide text-ink-soft">{label}</span>
                     {isLong ? (
                       <textarea
                         rows={4}
@@ -635,16 +635,16 @@ function DetailModal({
           )}
         </div>
 
-        <div className="border-t border-kraft px-6 py-3 flex flex-wrap justify-end gap-2 bg-nama">
+        <div className="border-t border-ink px-6 py-3 flex flex-wrap justify-end gap-2 bg-paper">
           {!editing ? (
             <>
-              <button onClick={copy} className="border border-kraft-deep bg-transparent px-3 py-1.5 text-sm text-sumi hover:bg-sumi hover:text-nama transition-colors">
+              <button onClick={copy} className="border border-ink bg-transparent px-3 py-1.5 text-sm text-ink hover:bg-ink hover:text-paper transition-colors">
                 テンプレ形式でコピー
               </button>
-              <button onClick={() => setEditing(true)} className="border border-sumi bg-sumi px-3 py-1.5 text-sm text-nama hover:bg-shu hover:border-shu transition-colors">
+              <button onClick={() => setEditing(true)} className="border border-ink bg-ink px-3 py-1.5 text-sm text-paper hover:bg-yolk hover:border-ink transition-colors">
                 編集
               </button>
-              <button onClick={onDelete} className="border border-shu bg-transparent px-3 py-1.5 text-sm text-shu hover:bg-shu hover:text-nama transition-colors">
+              <button onClick={onDelete} className="border border-ink bg-transparent px-3 py-1.5 text-sm text-ink hover:bg-yolk hover:text-paper transition-colors">
                 削除
               </button>
             </>
@@ -661,16 +661,16 @@ function DetailModal({
                   setEditing(false);
                 }}
                 disabled={saving}
-                className="border border-kraft-deep bg-transparent px-3 py-1.5 text-sm text-sumi-fade hover:text-sumi disabled:opacity-50"
+                className="border border-ink bg-transparent px-3 py-1.5 text-sm text-ink-fade hover:text-ink disabled:opacity-50"
               >
                 キャンセル
               </button>
               <button
                 onClick={save}
                 disabled={saving}
-                className="font-mincho inline-flex items-center gap-2 border border-sumi bg-sumi px-4 py-1.5 text-sm font-bold text-nama hover:bg-shu hover:border-shu transition-colors disabled:opacity-60"
+                className="font-mincho inline-flex items-center gap-2 border border-ink bg-ink px-4 py-1.5 text-sm font-bold text-paper hover:bg-yolk hover:border-ink transition-colors disabled:opacity-60"
               >
-                {saving && <span className="h-3 w-3 animate-spin rounded-full border-2 border-nama border-t-transparent" />}
+                {saving && <span className="h-3 w-3 animate-spin rounded-full border-2 border-paper border-t-transparent" />}
                 保存
               </button>
             </>

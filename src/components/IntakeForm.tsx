@@ -163,13 +163,13 @@ export function IntakeForm() {
 
       <form onSubmit={handleSubmit(onValid, onInvalid)} className="space-y-10 pb-32">
         {/* テンプレ配布 */}
-        <section className="border border-kraft bg-nama-paper p-5 md:p-6 space-y-3">
+        <section className="border border-ink bg-paper p-5 md:p-6 space-y-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="font-mincho text-[10px] tracking-widest text-shu uppercase">
+              <p className="display-xl text-[11px] tracking-widest text-ink">
                 Step&nbsp;0&nbsp;/&nbsp;Template
               </p>
-              <h2 className="font-mincho text-lg font-bold text-sumi mt-0.5 tracking-wide">
+              <h2 className="mincho-xl text-2xl text-ink mt-1">
                 フォーマットを入手
               </h2>
             </div>
@@ -177,27 +177,27 @@ export function IntakeForm() {
               <button
                 type="button"
                 onClick={copyTemplate}
-                className="border border-kraft-deep bg-transparent px-3 py-1.5 text-xs text-sumi hover:bg-sumi hover:text-nama transition-colors"
+                className="border border-ink bg-transparent px-3 py-1.5 text-xs text-ink hover:bg-ink hover:text-paper transition-colors"
               >
                 テキストでコピー
               </button>
               <button
                 type="button"
                 onClick={downloadTemplate}
-                className="border border-sumi bg-sumi px-3 py-1.5 text-xs text-nama hover:bg-shu hover:border-shu transition-colors"
+                className="border border-ink bg-ink px-3 py-1.5 text-xs text-paper hover:bg-yolk hover:border-ink transition-colors"
               >
                 .txt をダウンロード
               </button>
             </div>
           </div>
-          <p className="text-xs text-sumi-soft leading-relaxed">
-            空のテンプレートをダウンロードできます。<span className="text-shu font-medium">Claude / ChatGPT / Gemini</span> 等のAIに音声書き起こしと共に渡して埋めてもらい、完成テキストを下の貼付け欄に戻してください。
+          <p className="text-xs text-ink-soft leading-relaxed">
+            空のテンプレートをダウンロードできます。<span className="text-ink font-medium">Claude / ChatGPT / Gemini</span> 等のAIに音声書き起こしと共に渡して埋めてもらい、完成テキストを下の貼付け欄に戻してください。
           </p>
-          <details className="text-xs text-sumi-soft">
-            <summary className="cursor-pointer font-medium text-sumi hover:text-shu">
+          <details className="text-xs text-ink-soft">
+            <summary className="cursor-pointer font-medium text-ink hover:text-ink">
               AIへの依頼文の例
             </summary>
-            <pre className="mt-2 whitespace-pre-wrap border border-kraft bg-nama p-3 font-mono text-[11px] text-sumi-soft leading-relaxed">
+            <pre className="mt-2 whitespace-pre-wrap border border-ink bg-paper p-3 font-mono text-[11px] text-ink-soft leading-relaxed">
 {`以下のテンプレートを、添付した音声書き起こし(または聞き取りメモ)の内容で埋めてください。
 - 記載がない項目は空欄のまま
 - 介護度は「自立 / 要支援1 / 要支援2 / 要介護1〜5」のいずれか
@@ -212,13 +212,13 @@ export function IntakeForm() {
         </section>
 
         {/* 貼り付け */}
-        <section className="border border-kraft bg-nama-paper p-5 md:p-6 space-y-3">
+        <section className="border border-ink bg-paper p-5 md:p-6 space-y-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="font-mincho text-[10px] tracking-widest text-shu uppercase">
+              <p className="display-xl text-[11px] tracking-widest text-ink">
                 Step&nbsp;1&nbsp;/&nbsp;Paste
               </p>
-              <h2 className="font-mincho text-lg font-bold text-sumi mt-0.5 tracking-wide">
+              <h2 className="mincho-xl text-2xl text-ink mt-1">
                 テンプレを貼り付け
               </h2>
             </div>
@@ -226,32 +226,32 @@ export function IntakeForm() {
               <button
                 type="button"
                 onClick={loadSample}
-                className="border border-kraft-deep bg-transparent px-3 py-1.5 text-xs text-sumi hover:bg-sumi hover:text-nama transition-colors"
+                className="border border-ink bg-transparent px-3 py-1.5 text-xs text-ink hover:bg-ink hover:text-paper transition-colors"
               >
                 サンプル投入
               </button>
               <button
                 type="button"
                 onClick={clearPaste}
-                className="border border-kraft-deep bg-transparent px-3 py-1.5 text-xs text-sumi-fade hover:text-sumi"
+                className="border border-ink bg-transparent px-3 py-1.5 text-xs text-ink-fade hover:text-ink"
               >
                 クリア
               </button>
               <button
                 type="button"
                 onClick={() => applyParsed(pasteText)}
-                className="border border-shu bg-shu px-3 py-1.5 text-xs text-nama hover:bg-shu-deep transition-colors"
+                className="border border-ink bg-yolk px-3 py-1.5 text-xs text-paper hover:bg-yolk-deep transition-colors"
               >
                 反映する →
               </button>
             </div>
           </div>
-          <p className="text-xs text-sumi-soft leading-relaxed">
-            貼り付けで<span className="font-medium text-sumi">自動的に各項目へ反映</span>します。
+          <p className="text-xs text-ink-soft leading-relaxed">
+            貼り付けで<span className="font-medium text-ink">自動的に各項目へ反映</span>します。
           </p>
           <textarea
             rows={8}
-            className={`${inputClass} font-mono text-xs bg-nama`}
+            className={`${inputClass} font-mono text-xs bg-paper`}
             placeholder={"【問い合わせ日】2026年5月21日\n【顧客名（イニシャル可）】鈴木一世様\n…"}
             value={pasteText}
             onChange={(e) => setPasteText(e.target.value)}
@@ -264,7 +264,7 @@ export function IntakeForm() {
             }}
           />
           {pasteInfo && (
-            <p className="text-xs text-shu-deep border-l-2 border-shu pl-2">
+            <p className="text-xs text-ink border-l-2 border-ink pl-2">
               {pasteInfo}
             </p>
           )}
@@ -272,8 +272,8 @@ export function IntakeForm() {
 
         {/* 基本情報 */}
         <section className="space-y-5">
-          <h2 className="shu-bar font-mincho text-xl font-bold tracking-wide text-sumi">
-            <span className="section-num mr-2">一</span>基本情報
+          <h2 className="flex items-baseline gap-3 border-t-2 border-ink pt-4 font-mincho text-2xl md:text-3xl font-bold text-ink">
+            <span className="display-xl text-base text-ink-mute tracking-widest">01</span>基本情報
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
             <Field label="問い合わせ日" required error={errors.inquiryDate?.message}>
@@ -290,7 +290,7 @@ export function IntakeForm() {
                 {GENDERS.map((g) => (
                   <label
                     key={g}
-                    className="flex-1 inline-flex items-center justify-center gap-1 border border-kraft bg-nama-paper px-2 py-2 text-sm cursor-pointer has-[:checked]:border-shu has-[:checked]:bg-shu has-[:checked]:text-nama transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-1 border border-ink bg-paper px-2 py-2 text-sm cursor-pointer has-[:checked]:border-ink has-[:checked]:bg-yolk has-[:checked]:text-paper transition-colors"
                   >
                     <input
                       type="radio"
@@ -334,8 +334,8 @@ export function IntakeForm() {
 
         {/* ADL */}
         <section className="space-y-5">
-          <h2 className="shu-bar font-mincho text-xl font-bold tracking-wide text-sumi">
-            <span className="section-num mr-2">二</span>ADL
+          <h2 className="flex items-baseline gap-3 border-t-2 border-ink pt-4 font-mincho text-2xl md:text-3xl font-bold text-ink">
+            <span className="display-xl text-base text-ink-mute tracking-widest">02</span>ADL
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
             <Field label="座位"><input className={inputClass} placeholder="例：自立" {...register("adlSitting")} /></Field>
@@ -351,15 +351,15 @@ export function IntakeForm() {
 
         {/* 状況 */}
         <section className="space-y-5">
-          <h2 className="shu-bar font-mincho text-xl font-bold tracking-wide text-sumi">
-            <span className="section-num mr-2">三</span>状況
+          <h2 className="flex items-baseline gap-3 border-t-2 border-ink pt-4 font-mincho text-2xl md:text-3xl font-bold text-ink">
+            <span className="display-xl text-base text-ink-mute tracking-widest">03</span>状況
           </h2>
           <Field label="借金の有無" required>
             <div className="flex gap-2 py-1 max-w-xs">
               {(["あり", "なし"] as const).map((v) => (
                 <label
                   key={v}
-                  className="flex-1 inline-flex items-center justify-center gap-1 border border-kraft bg-nama-paper px-3 py-2 text-sm cursor-pointer has-[:checked]:border-shu has-[:checked]:bg-shu has-[:checked]:text-nama transition-colors"
+                  className="flex-1 inline-flex items-center justify-center gap-1 border border-ink bg-paper px-3 py-2 text-sm cursor-pointer has-[:checked]:border-ink has-[:checked]:bg-yolk has-[:checked]:text-paper transition-colors"
                 >
                   <input
                     type="radio"
@@ -386,8 +386,8 @@ export function IntakeForm() {
 
         {/* 関係者 */}
         <section className="space-y-5">
-          <h2 className="shu-bar font-mincho text-xl font-bold tracking-wide text-sumi">
-            <span className="section-num mr-2">四</span>関係者
+          <h2 className="flex items-baseline gap-3 border-t-2 border-ink pt-4 font-mincho text-2xl md:text-3xl font-bold text-ink">
+            <span className="display-xl text-base text-ink-mute tracking-widest">04</span>関係者
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
             <Field label="キーパーソン"><input className={inputClass} placeholder="例：奥様" {...register("keyPerson")} /></Field>
@@ -397,22 +397,22 @@ export function IntakeForm() {
         </section>
 
         {/* 固定送信バー */}
-        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-kraft bg-nama/95 backdrop-blur">
+        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-ink bg-paper/95 backdrop-blur">
           <div className="mx-auto max-w-3xl px-4 py-3 flex items-center justify-between gap-2">
             <button
               type="button"
               onClick={resetAll}
-              className="border border-kraft-deep bg-transparent px-3 py-2 text-xs text-sumi-fade hover:text-sumi"
+              className="border border-ink bg-transparent px-3 py-2 text-xs text-ink-fade hover:text-ink"
             >
               リセット
             </button>
             <div className="flex items-center gap-3">
-              <span className="hidden sm:inline font-mincho text-xs text-sumi-fade tracking-wider">
+              <span className="hidden sm:inline font-mincho text-xs text-ink-fade tracking-wider">
                 ご確認のうえ
               </span>
               <button
                 type="submit"
-                className="font-mincho border border-sumi bg-sumi px-6 py-2.5 text-sm font-bold tracking-wider text-nama hover:bg-shu hover:border-shu transition-colors"
+                className="font-mincho border border-ink bg-ink px-6 py-2.5 text-sm font-bold tracking-wider text-paper hover:bg-yolk hover:border-ink transition-colors"
               >
                 確認して送信 →
               </button>
@@ -447,41 +447,41 @@ function ConfirmModal({
   const preview = formatIntakeMessage(values);
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-sumi/60 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4"
       onClick={() => (submitting ? null : onCancel())}
     >
       <div
-        className="max-h-[90vh] w-full max-w-2xl overflow-hidden border border-sumi bg-nama-paper shadow-2xl flex flex-col"
+        className="max-h-[90vh] w-full max-w-2xl overflow-hidden border border-ink bg-paper shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="border-b border-kraft px-6 py-4 flex items-center justify-between bg-nama">
+        <div className="border-b border-ink px-6 py-4 flex items-center justify-between bg-paper">
           <div>
-            <p className="font-mincho text-[10px] tracking-widest text-shu uppercase">Confirm</p>
-            <h2 className="font-mincho text-lg font-bold text-sumi mt-0.5">送信内容の確認</h2>
+            <p className="display-xl text-[11px] tracking-widest text-ink">Confirm</p>
+            <h2 className="font-mincho text-lg font-bold text-ink mt-0.5">送信内容の確認</h2>
           </div>
           <button
             onClick={onCancel}
             disabled={submitting}
-            className="text-sumi-fade hover:text-sumi disabled:opacity-50 text-xl"
+            className="text-ink-fade hover:text-ink disabled:opacity-50 text-xl"
             aria-label="閉じる"
           >
             ×
           </button>
         </div>
         <div className="overflow-auto px-6 py-4">
-          <p className="mb-3 text-xs text-sumi-soft">
+          <p className="mb-3 text-xs text-ink-soft">
             この内容で記録されます。修正がある場合は「戻る」を押してください。
           </p>
-          <pre className="whitespace-pre-wrap border border-kraft bg-nama p-4 text-xs text-sumi leading-relaxed">
+          <pre className="whitespace-pre-wrap border border-ink bg-paper p-4 text-xs text-ink leading-relaxed">
             {preview}
           </pre>
         </div>
-        <div className="border-t border-kraft px-6 py-3 flex justify-end gap-2 bg-nama">
+        <div className="border-t border-ink px-6 py-3 flex justify-end gap-2 bg-paper">
           <button
             type="button"
             onClick={onCancel}
             disabled={submitting}
-            className="border border-kraft-deep bg-transparent px-4 py-2 text-sm text-sumi hover:bg-sumi hover:text-nama transition-colors disabled:opacity-50"
+            className="border border-ink bg-transparent px-4 py-2 text-sm text-ink hover:bg-ink hover:text-paper transition-colors disabled:opacity-50"
           >
             戻る
           </button>
@@ -489,10 +489,10 @@ function ConfirmModal({
             type="button"
             onClick={onConfirm}
             disabled={submitting}
-            className="font-mincho inline-flex items-center gap-2 border border-sumi bg-sumi px-5 py-2 text-sm font-bold tracking-wider text-nama hover:bg-shu hover:border-shu transition-colors disabled:opacity-60"
+            className="font-mincho inline-flex items-center gap-2 border border-ink bg-ink px-5 py-2 text-sm font-bold tracking-wider text-paper hover:bg-yolk hover:border-ink transition-colors disabled:opacity-60"
           >
             {submitting && (
-              <span className="h-3 w-3 animate-spin rounded-full border-2 border-nama border-t-transparent" />
+              <span className="h-3 w-3 animate-spin rounded-full border-2 border-paper border-t-transparent" />
             )}
             {submitting ? "送信中…" : "この内容で登録"}
           </button>

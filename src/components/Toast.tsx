@@ -25,39 +25,36 @@ export function Toast({
 
   if (!toast) return null;
 
-  const styles: Record<ToastKind, string> = {
-    success: "border-sumi bg-nama-paper text-sumi",
-    error: "border-shu-deep bg-shu-wash text-shu-deep",
-    info: "border-kraft-deep bg-nama-paper text-sumi-soft",
+  const tag: Record<ToastKind, string> = {
+    success: "OK",
+    error: "ERR",
+    info: "INFO",
   };
-  const icon: Record<ToastKind, string> = {
-    success: "成",
-    error: "誤",
-    info: "報",
-  };
-  const iconBg: Record<ToastKind, string> = {
-    success: "bg-sumi text-nama",
-    error: "bg-shu text-nama",
-    info: "bg-kraft-deep text-nama",
+  const tagBg: Record<ToastKind, string> = {
+    success: "bg-yolk text-ink",
+    error: "bg-ink text-paper",
+    info: "bg-paper text-ink border border-ink",
   };
 
   return (
     <div className="fixed top-4 right-4 z-[100] pointer-events-none">
       <div
         role="status"
-        className={`pointer-events-auto flex items-start gap-3 rounded-sm border px-4 py-3 shadow-xl ${styles[toast.kind]} max-w-sm`}
+        className="pointer-events-auto flex items-stretch gap-0 border border-ink bg-paper shadow-[4px_4px_0_0_rgba(0,0,0,1)] max-w-sm"
       >
         <span
-          className={`flex h-6 w-6 shrink-0 items-center justify-center font-mincho text-xs font-bold ${iconBg[toast.kind]}`}
+          className={`flex items-center justify-center px-3 font-display font-black text-[11px] tracking-widest ${tagBg[toast.kind]}`}
           aria-hidden
         >
-          {icon[toast.kind]}
+          {tag[toast.kind]}
         </span>
-        <p className="text-sm leading-relaxed flex-1">{toast.message}</p>
+        <p className="text-sm leading-relaxed px-3 py-3 flex-1">
+          {toast.message}
+        </p>
         <button
           type="button"
           onClick={onClose}
-          className="ml-1 text-sumi-fade hover:text-sumi"
+          className="px-3 text-ink-fade hover:text-ink"
           aria-label="閉じる"
         >
           ×
