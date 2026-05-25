@@ -1,6 +1,7 @@
 export type GasAction =
   | { action: "list" }
   | { action: "delete"; rowNumber: number }
+  | { action: "update"; rowNumber: number; cells: Record<string, string> }
   | { action: "create"; payload: unknown };
 
 export async function callGas(body: GasAction): Promise<{

@@ -16,6 +16,10 @@ function doPost(e) {
       deleteRow_(Number(body.rowNumber));
       return jsonOut_({ ok: true });
     }
+    if (action === 'update') {
+      updateCells_(Number(body.rowNumber), body.cells || {});
+      return jsonOut_({ ok: true });
+    }
 
     var payload = body.payload || {};
     appendRow_(payload);
@@ -154,6 +158,19 @@ function listRows_() {
   }
   rows.reverse();
   return rows;
+}
+
+function updateCells_(rowNumber, cells) {
+  if (!rowNumber || rowNumber < 2) throw new Error('invalid rowNumber');
+  var sheet = getSheet_();
+  Object.keys(cells).forEach(function (key) {
+    var m = key.match(/^c(\d+)$/);
+    if (!m) return;
+    var colIdx = Number(m[1]);
+    if (colIdx < 0 || colIdx >= COLUMN_HEADERS_.length) return;
+    var v = cells[key];
+    sheet.getRange(rowNumber, colIdx + 1).setValue(v == null ? '' : v);
+  });
 }
 
 function deleteRow_(rowNumber) {
