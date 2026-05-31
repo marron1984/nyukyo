@@ -41,12 +41,12 @@ var COLUMN_HEADERS_ = [
   '連絡先',
   'キーパーソン',
   '介護度',
+  '状況',
   'ADL詳細',
   '希望物件',
   'エント希望',
   '借金有無',
   '費用',
-  'その他、備考',
 ];
 
 function formToRow_(p, nextNo) {
@@ -90,7 +90,7 @@ function formToRow_(p, nextNo) {
     p.contactPerson && p.contactPerson !== '未確認' ? '担当:' + p.contactPerson : '',
   ], ' / ');
 
-  var others = joinNonEmpty([s(p.others), s(p.situation)], '\n\n');
+  var situation = joinNonEmpty([s(p.situation), s(p.others)], '\n\n');
 
   return [
     nextNo,                          // No.
@@ -103,12 +103,12 @@ function formToRow_(p, nextNo) {
     contact,                         // 連絡先
     s(p.keyPerson),                  // キーパーソン
     s(p.careLevel),                  // 介護度
+    situation,                       // 状況
     adlDetail,                       // ADL詳細
     s(p.preferredProperty),          // 希望物件
     s(p.ent),                        // エント希望
     debt,                            // 借金有無
     fmtYen(p.budgetYen),             // 費用
-    others,                          // その他、備考
   ];
 }
 

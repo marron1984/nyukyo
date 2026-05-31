@@ -14,12 +14,12 @@ const COLUMN_HEADERS = [
   "連絡先",
   "キーパーソン",
   "介護度",
+  "状況",
   "ADL詳細",
   "希望物件",
   "エント希望",
   "借金有無",
   "費用",
-  "その他、備考",
 ] as const;
 
 const STATUS_OPTIONS = ["新規", "対応中", "保留", "完了", "キャンセル"] as const;
@@ -44,7 +44,7 @@ type Row = {
   c15: string;
 };
 
-type SortKey = "c0" | "c1" | "c2" | "c3" | "c4" | "c9" | "c14" | "c8" | null;
+type SortKey = "c0" | "c1" | "c2" | "c3" | "c4" | "c9" |  "c15" | "c8" | null;
 type SortDir = "asc" | "desc";
 
 const STATUS_COLOR: Record<string, string> = {
@@ -268,7 +268,7 @@ export function AdminClient() {
     { key: "c3", label: "名前" },
     { key: "c4", label: "年齢" },
     { key: "c9", label: "介護度" },
-    { key: "c14", label: "費用" },
+    { key: "c15", label: "費用" },
     { key: "c8", label: "キーパーソン" },
   ];
 
@@ -451,7 +451,7 @@ export function AdminClient() {
                 <td className="px-3 py-2.5 text-ink-soft">{r.c4}</td>
                 <td className="px-3 py-2.5 text-ink-soft">{r.c9}</td>
                 <td className="px-3 py-2.5 whitespace-pre-line leading-tight text-ink-soft">
-                  {String(r.c14 ?? "").replace(/円\s*まで/g, "円\nまで")}
+                  {String(r.c15 ?? "").replace(/円\s*まで/g, "円\nまで")}
                 </td>
                 <td className="px-3 py-2.5 text-ink-soft">{r.c8}</td>
                 <td className="px-3 py-2.5 text-right whitespace-nowrap">
@@ -499,7 +499,7 @@ export function AdminClient() {
               {r.c3 || "(無名)"} <span className="text-xs font-normal text-ink-fade ml-1">{r.c4} {r.c5}</span>
             </div>
             <div className="mt-1 text-xs text-ink-soft">
-              {r.c9} · {String(r.c14 ?? "").replace(/円\s*まで/g, "円 / まで")}
+              {r.c9} · {String(r.c15 ?? "").replace(/円\s*まで/g, "円 / まで")}
             </div>
           </button>
         ))}
@@ -610,7 +610,7 @@ function DetailModal({
             <div className="space-y-3">
               {COLUMN_HEADERS.map((label, i) => {
                 const k = `c${i}`;
-                const isLong = label === "ADL詳細" || label === "その他、備考";
+                const isLong = label === "ADL詳細" || label === "状況";
                 return (
                   <label key={k} className="block">
                     <span className="text-xs font-medium uppercase tracking-wide text-ink-soft">{label}</span>
