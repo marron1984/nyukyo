@@ -5,29 +5,52 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // 機能的なカラー
         ink: {
-          DEFAULT: "#0a0a0a",
-          soft: "#2a2a2a",
-          fade: "#6b6b6b",
-          mute: "#9a9a9a",
+          DEFAULT: "#1a1f2e",
+          soft: "#3d4759",
+          fade: "#6b7280",
+          mute: "#9ca3af",
         },
         paper: {
           DEFAULT: "#ffffff",
-          off: "#f7f5f0",
+          off: "#fafaf7",
+          warm: "#f5f3ed",
         },
+        // プライマリ (深紺)
+        brand: {
+          DEFAULT: "#1e3a5f",
+          deep: "#16294a",
+          soft: "#e8eef5",
+          line: "#c7d4e3",
+        },
+        // アクセント (山吹色)
         yolk: {
-          DEFAULT: "#F4C430",
-          deep: "#D9A91A",
-          wash: "#FFF5D1",
+          DEFAULT: "#e8b923",
+          deep: "#c79b15",
+          soft: "#fff4ce",
         },
-        line: "#0a0a0a",
+        // ステータスカラー(機能色)
+        status: {
+          new: "#2563eb",      // 青
+          newBg: "#dbeafe",
+          progress: "#d97706", // 橙
+          progressBg: "#fed7aa",
+          hold: "#6b7280",     // 灰
+          holdBg: "#e5e7eb",
+          done: "#059669",     // 緑
+          doneBg: "#d1fae5",
+          cancel: "#dc2626",   // 朱
+          cancelBg: "#fee2e2",
+        },
       },
       fontFamily: {
-        display: [
-          '"Inter Tight"',
-          "Inter",
+        sans: [
+          '"Noto Sans JP"',
+          "-apple-system",
+          "BlinkMacSystemFont",
           "Helvetica Neue",
-          "Arial",
+          "Hiragino Sans",
           "sans-serif",
         ],
         mincho: [
@@ -35,19 +58,17 @@ const config: Config = {
           '"Hiragino Mincho ProN"',
           "serif",
         ],
-        sans: [
+        display: [
+          '"Inter Tight"',
+          "Inter",
           '"Noto Sans JP"',
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Helvetica Neue",
           "sans-serif",
         ],
       },
-      letterSpacing: {
-        tightest: "-0.04em",
-        tight: "-0.02em",
-        wider: "0.1em",
-        widest: "0.2em",
+      boxShadow: {
+        card: "0 1px 3px 0 rgba(20,30,55,0.05), 0 1px 2px 0 rgba(20,30,55,0.03)",
+        soft: "0 4px 12px -2px rgba(20,30,55,0.08), 0 2px 4px -1px rgba(20,30,55,0.04)",
+        lift: "0 12px 32px -8px rgba(20,30,55,0.15), 0 4px 8px -2px rgba(20,30,55,0.06)",
       },
     },
   },

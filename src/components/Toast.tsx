@@ -25,40 +25,44 @@ export function Toast({
 
   if (!toast) return null;
 
-  const tag: Record<ToastKind, string> = {
-    success: "OK",
-    error: "ERR",
-    info: "INFO",
+  const styles: Record<ToastKind, { bar: string; icon: string; label: string }> = {
+    success: { bar: "bg-status-done", icon: "✓", label: "完了" },
+    error: { bar: "bg-status-cancel", icon: "!", label: "エラー" },
+    info: { bar: "bg-status-new", icon: "i", label: "お知らせ" },
   };
-  const tagBg: Record<ToastKind, string> = {
-    success: "bg-yolk text-ink",
-    error: "bg-ink text-paper",
-    info: "bg-paper text-ink border border-ink",
-  };
+  const s = styles[toast.kind];
 
   return (
     <div className="fixed top-4 right-4 z-[100] pointer-events-none">
       <div
         role="status"
-        className="pointer-events-auto flex items-stretch gap-0 border border-ink bg-paper shadow-[4px_4px_0_0_rgba(0,0,0,1)] max-w-sm"
+        className="pointer-events-auto flex items-stretch overflow-hidden rounded-xl border border-brand-line bg-paper shadow-lift max-w-sm"
       >
-        <span
-          className={`flex items-center justify-center px-3 font-display font-black text-[11px] tracking-widest ${tagBg[toast.kind]}`}
-          aria-hidden
-        >
-          {tag[toast.kind]}
-        </span>
-        <p className="text-sm leading-relaxed px-3 py-3 flex-1">
-          {toast.message}
-        </p>
-        <button
-          type="button"
-          onClick={onClose}
-          className="px-3 text-ink-fade hover:text-ink"
-          aria-label="閉じる"
-        >
-          ×
-        </button>
+        <div className={`${s.bar} w-1.5`} aria-hidden />
+        <div className="flex items-start gap-3 px-4 py-3 flex-1">
+          <span
+            className={`${s.bar} flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-paper mt-0.5`}
+            aria-hidden
+          >
+            {s.icon}
+          </span>
+          <div className="flex-1">
+            <p className="text-[11px] font-semibold text-ink-fade tracking-wide">
+              {s.label}
+            </p>
+            <p className="text-sm text-ink mt-0.5 leading-relaxed">
+              {toast.message}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-ink-mute hover:text-ink"
+            aria-label="閉じる"
+          >
+            ×
+          </button>
+        </div>
       </div>
     </div>
   );

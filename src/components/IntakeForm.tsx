@@ -66,7 +66,10 @@ export function IntakeForm() {
       if (k === "_unmatched") return;
       const v = parsed[k];
       if (v === undefined || v === null || v === "") return;
-      setValue(k as keyof IntakeFormType, v as never, { shouldDirty: true, shouldValidate: false });
+      setValue(k as keyof IntakeFormType, v as never, {
+        shouldDirty: true,
+        shouldValidate: false,
+      });
       count++;
     });
     const unmatched = parsed._unmatched ?? [];
@@ -94,10 +97,7 @@ export function IntakeForm() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    setToast({
-      kind: "success",
-      message: "テンプレートをダウンロードしました",
-    });
+    setToast({ kind: "success", message: "テンプレートをダウンロードしました" });
   }
 
   async function copyTemplate() {
@@ -128,7 +128,10 @@ export function IntakeForm() {
   }
 
   function onInvalid() {
-    setToast({ kind: "error", message: "未入力または不正な項目があります。赤い表示を確認してください。" });
+    setToast({
+      kind: "error",
+      message: "未入力または不正な項目があります。赤い表示を確認してください。",
+    });
   }
 
   async function confirmedSubmit() {
@@ -161,43 +164,48 @@ export function IntakeForm() {
     <>
       <Toast toast={toast} onClose={() => setToast(null)} />
 
-      <form onSubmit={handleSubmit(onValid, onInvalid)} className="space-y-10 pb-32">
-        {/* テンプレ配布 */}
-        <section className="border border-ink bg-paper p-5 md:p-6 space-y-3">
-          <div className="flex flex-wrap items-start justify-between gap-3">
+      <form
+        onSubmit={handleSubmit(onValid, onInvalid)}
+        className="space-y-6 pb-28"
+      >
+        {/* Step 0: AI下準備（任意） */}
+        <section className="rounded-2xl border border-brand-line bg-paper shadow-card overflow-hidden">
+          <div className="bg-brand-soft px-5 py-4 border-b border-brand-line flex items-center gap-3">
+            <span className="step-num">0</span>
             <div>
-              <p className="display-xl text-[11px] tracking-widest text-ink">
-                Step&nbsp;0&nbsp;/&nbsp;Template
-              </p>
-              <h2 className="mincho-xl text-2xl text-ink mt-1">
-                フォーマットを入手
+              <h2 className="text-base font-bold text-brand">
+                AIにテンプレを埋めてもらう（任意）
               </h2>
+              <p className="text-xs text-ink-fade mt-0.5">
+                Claude / ChatGPT / Gemini などに渡して使えます
+              </p>
             </div>
+          </div>
+          <div className="px-5 py-4 space-y-3">
+            <p className="text-sm text-ink-soft leading-relaxed">
+              空のテンプレートをダウンロードしてAIに渡し、完成テキストを<strong>Step 1</strong>に貼り付けてください。
+            </p>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={copyTemplate}
-                className="border border-ink bg-transparent px-3 py-1.5 text-xs text-ink hover:bg-ink hover:text-paper transition-colors"
+                onClick={downloadTemplate}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-paper shadow-card hover:bg-brand-deep transition-colors"
               >
-                テキストでコピー
+                ⬇ テンプレをダウンロード
               </button>
               <button
                 type="button"
-                onClick={downloadTemplate}
-                className="border border-ink bg-ink px-3 py-1.5 text-xs text-paper hover:bg-yolk hover:border-ink transition-colors"
+                onClick={copyTemplate}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-brand-line bg-paper px-4 py-2 text-sm font-medium text-ink hover:bg-paper-warm transition-colors"
               >
-                .txt をダウンロード
+                📋 コピー
               </button>
             </div>
-          </div>
-          <p className="text-xs text-ink-soft leading-relaxed">
-            空のテンプレートをダウンロードできます。<span className="text-ink font-medium">Claude / ChatGPT / Gemini</span> 等のAIに音声書き起こしと共に渡して埋めてもらい、完成テキストを下の貼付け欄に戻してください。
-          </p>
-          <details className="text-xs text-ink-soft">
-            <summary className="cursor-pointer font-medium text-ink hover:text-ink">
-              AIへの依頼文の例
-            </summary>
-            <pre className="mt-2 whitespace-pre-wrap border border-ink bg-paper p-3 font-mono text-[11px] text-ink-soft leading-relaxed">
+            <details className="text-sm text-ink-soft">
+              <summary className="cursor-pointer font-medium text-xs text-brand hover:underline">
+                AIへの依頼文の例を見る
+              </summary>
+              <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-paper-warm p-3 font-mono text-[11px] leading-relaxed text-ink-soft">
 {`以下のテンプレートを、添付した音声書き起こし(または聞き取りメモ)の内容で埋めてください。
 - 記載がない項目は空欄のまま
 - 介護度は「自立 / 要支援1 / 要支援2 / 要介護1〜5」のいずれか
@@ -207,90 +215,117 @@ export function IntakeForm() {
 [ここに上のテンプレートを貼り付け]
 
 [ここに音声書き起こしを貼り付け]`}
-            </pre>
-          </details>
+              </pre>
+            </details>
+          </div>
         </section>
 
-        {/* 貼り付け */}
-        <section className="border border-ink bg-paper p-5 md:p-6 space-y-3">
-          <div className="flex flex-wrap items-start justify-between gap-3">
+        {/* Step 1: 貼り付けで自動入力 */}
+        <section className="rounded-2xl border border-brand-line bg-paper shadow-card overflow-hidden">
+          <div className="bg-yolk-soft px-5 py-4 border-b border-brand-line flex items-center gap-3">
+            <span className="step-num">1</span>
             <div>
-              <p className="display-xl text-[11px] tracking-widest text-ink">
-                Step&nbsp;1&nbsp;/&nbsp;Paste
-              </p>
-              <h2 className="mincho-xl text-2xl text-ink mt-1">
-                テンプレを貼り付け
+              <h2 className="text-base font-bold text-ink">
+                テンプレを貼り付けて自動入力
               </h2>
+              <p className="text-xs text-ink-fade mt-0.5">
+                貼り付けるだけで各項目に自動反映します
+              </p>
             </div>
+          </div>
+          <div className="px-5 py-4 space-y-3">
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={loadSample}
-                className="border border-ink bg-transparent px-3 py-1.5 text-xs text-ink hover:bg-ink hover:text-paper transition-colors"
+                className="rounded-lg border border-brand-line bg-paper px-3 py-1.5 text-xs font-medium text-ink hover:bg-paper-warm transition-colors"
               >
                 サンプル投入
               </button>
               <button
                 type="button"
                 onClick={clearPaste}
-                className="border border-ink bg-transparent px-3 py-1.5 text-xs text-ink-fade hover:text-ink"
+                className="rounded-lg border border-brand-line bg-paper px-3 py-1.5 text-xs font-medium text-ink-fade hover:text-ink hover:bg-paper-warm transition-colors"
               >
                 クリア
               </button>
               <button
                 type="button"
                 onClick={() => applyParsed(pasteText)}
-                className="border border-ink bg-yolk px-3 py-1.5 text-xs text-paper hover:bg-yolk-deep transition-colors"
+                disabled={!pasteText.trim()}
+                className="ml-auto inline-flex items-center gap-1 rounded-lg bg-yolk px-4 py-1.5 text-xs font-bold text-ink shadow-card hover:bg-yolk-deep transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 反映する →
               </button>
             </div>
+            <textarea
+              rows={8}
+              className={`${inputClass} font-mono text-xs`}
+              placeholder={
+                "【問い合わせ日】2026年5月21日\n【顧客名（イニシャル可）】鈴木一世様\n…"
+              }
+              value={pasteText}
+              onChange={(e) => setPasteText(e.target.value)}
+              onPaste={(e) => {
+                const t = e.clipboardData.getData("text");
+                if (!t) return;
+                e.preventDefault();
+                setPasteText(t);
+                setTimeout(() => applyParsed(t), 0);
+              }}
+            />
+            {pasteInfo && (
+              <p className="flex items-center gap-1.5 rounded-lg border border-status-done/30 bg-status-doneBg px-3 py-2 text-xs font-medium text-status-done">
+                <span aria-hidden>✓</span>
+                {pasteInfo}
+              </p>
+            )}
           </div>
-          <p className="text-xs text-ink-soft leading-relaxed">
-            貼り付けで<span className="font-medium text-ink">自動的に各項目へ反映</span>します。
-          </p>
-          <textarea
-            rows={8}
-            className={`${inputClass} font-mono text-xs bg-paper`}
-            placeholder={"【問い合わせ日】2026年5月21日\n【顧客名（イニシャル可）】鈴木一世様\n…"}
-            value={pasteText}
-            onChange={(e) => setPasteText(e.target.value)}
-            onPaste={(e) => {
-              const t = e.clipboardData.getData("text");
-              if (!t) return;
-              e.preventDefault();
-              setPasteText(t);
-              setTimeout(() => applyParsed(t), 0);
-            }}
-          />
-          {pasteInfo && (
-            <p className="text-xs text-ink border-l-2 border-ink pl-2">
-              {pasteInfo}
-            </p>
-          )}
         </section>
 
-        {/* 基本情報 */}
-        <section className="space-y-5">
-          <h2 className="flex items-baseline gap-3 border-t-2 border-ink pt-4 font-mincho text-2xl md:text-3xl font-bold text-ink">
-            <span className="display-xl text-base text-ink-mute tracking-widest">01</span>基本情報
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-            <Field label="問い合わせ日" required error={errors.inquiryDate?.message}>
-              <input type="date" className={inputClass} {...register("inquiryDate")} />
+        {/* Step 2: 基本情報 */}
+        <FormSection num="2" title="基本情報" desc="お客様の基本情報をご入力ください">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
+            <Field
+              label="問い合わせ日"
+              required
+              error={errors.inquiryDate?.message}
+            >
+              <input
+                type="date"
+                className={inputClass}
+                {...register("inquiryDate")}
+              />
             </Field>
-            <Field label="顧客名（イニシャル可）" required error={errors.customerName?.message}>
-              <input className={inputClass} placeholder="例：鈴木一世様" {...register("customerName")} />
+            <Field
+              label="顧客名（イニシャル可）"
+              required
+              error={errors.customerName?.message}
+            >
+              <input
+                className={inputClass}
+                placeholder="例：鈴木一世様"
+                {...register("customerName")}
+              />
             </Field>
-            <Field label="年齢" error={errors.age?.message as string | undefined}>
-              <input type="number" min={0} className={inputClass} {...register("age")} />
+            <Field
+              label="年齢"
+              error={errors.age?.message as string | undefined}
+            >
+              <input
+                type="number"
+                min={0}
+                className={inputClass}
+                placeholder="例：78"
+                {...register("age")}
+              />
             </Field>
             <Field label="性別" required>
-              <div className="flex gap-2 py-1">
+              <div className="grid grid-cols-3 gap-2">
                 {GENDERS.map((g) => (
                   <label
                     key={g}
-                    className="flex-1 inline-flex items-center justify-center gap-1 border border-ink bg-paper px-2 py-2 text-sm cursor-pointer has-[:checked]:border-ink has-[:checked]:bg-yolk has-[:checked]:text-paper transition-colors"
+                    className="inline-flex items-center justify-center rounded-lg border-2 border-brand-line bg-paper px-2 py-2.5 text-sm font-medium cursor-pointer has-[:checked]:border-yolk has-[:checked]:bg-yolk-soft transition-all"
                   >
                     <input
                       type="radio"
@@ -306,117 +341,189 @@ export function IntakeForm() {
             <Field label="介護度" required>
               <select className={inputClass} {...register("careLevel")}>
                 {CARE_LEVELS.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
                 ))}
               </select>
             </Field>
-            <Field label="費用（円・上限）" error={errors.budgetYen?.message as string | undefined}>
-              <input type="number" min={0} step={1000} className={inputClass} placeholder="例：140000" {...register("budgetYen")} />
+            <Field
+              label="費用（円・上限）"
+              hint="月額の上限（数字のみ）"
+              error={errors.budgetYen?.message as string | undefined}
+            >
+              <input
+                type="number"
+                min={0}
+                step={1000}
+                className={inputClass}
+                placeholder="例：140000"
+                {...register("budgetYen")}
+              />
             </Field>
             <Field label="ステータス">
               <select className={inputClass} {...register("status")}>
                 {["新規", "対応中", "保留", "完了", "キャンセル"].map((s) => (
-                  <option key={s} value={s}>{s}</option>
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
                 ))}
               </select>
             </Field>
             <Field label="入居場所">
-              <input className={inputClass} placeholder="例：大阪市鶴見区" {...register("residenceLocation")} />
+              <input
+                className={inputClass}
+                placeholder="例：大阪市鶴見区"
+                {...register("residenceLocation")}
+              />
             </Field>
             <Field label="連絡先">
-              <input className={inputClass} placeholder="電話番号 / メール 等" {...register("contact")} />
+              <input
+                className={inputClass}
+                placeholder="電話番号 / メール 等"
+                {...register("contact")}
+              />
             </Field>
             <Field label="希望物件">
               <input className={inputClass} {...register("preferredProperty")} />
             </Field>
           </div>
-        </section>
+        </FormSection>
 
-        {/* ADL */}
-        <section className="space-y-5">
-          <h2 className="flex items-baseline gap-3 border-t-2 border-ink pt-4 font-mincho text-2xl md:text-3xl font-bold text-ink">
-            <span className="display-xl text-base text-ink-mute tracking-widest">02</span>ADL
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-            <Field label="座位"><input className={inputClass} placeholder="例：自立" {...register("adlSitting")} /></Field>
-            <Field label="立位"><input className={inputClass} placeholder="例：自立" {...register("adlStanding")} /></Field>
-            <Field label="排泄"><input className={inputClass} placeholder="例：自立" {...register("adlToilet")} /></Field>
-            <Field label="食事"><input className={inputClass} placeholder="例：自立" {...register("adlMeal")} /></Field>
-            <Field label="意思疎通"><input className={inputClass} placeholder="例：支離滅裂だが時折可能" {...register("adlCommunication")} /></Field>
+        {/* Step 3: ADL */}
+        <FormSection num="3" title="ADL（日常生活動作）">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
+            <Field label="座位">
+              <input
+                className={inputClass}
+                placeholder="例：自立"
+                {...register("adlSitting")}
+              />
+            </Field>
+            <Field label="立位">
+              <input
+                className={inputClass}
+                placeholder="例：自立"
+                {...register("adlStanding")}
+              />
+            </Field>
+            <Field label="排泄">
+              <input
+                className={inputClass}
+                placeholder="例：自立"
+                {...register("adlToilet")}
+              />
+            </Field>
+            <Field label="食事">
+              <input
+                className={inputClass}
+                placeholder="例：自立"
+                {...register("adlMeal")}
+              />
+            </Field>
+            <Field label="意思疎通">
+              <input
+                className={inputClass}
+                placeholder="例：支離滅裂だが時折可能"
+                {...register("adlCommunication")}
+              />
+            </Field>
           </div>
-          <Field label="ADL詳細">
-            <textarea rows={3} className={inputClass} {...register("adlDetail")} />
-          </Field>
-        </section>
-
-        {/* 状況 */}
-        <section className="space-y-5">
-          <h2 className="flex items-baseline gap-3 border-t-2 border-ink pt-4 font-mincho text-2xl md:text-3xl font-bold text-ink">
-            <span className="display-xl text-base text-ink-mute tracking-widest">03</span>状況
-          </h2>
-          <Field label="借金の有無" required>
-            <div className="flex gap-2 py-1 max-w-xs">
-              {(["あり", "なし"] as const).map((v) => (
-                <label
-                  key={v}
-                  className="flex-1 inline-flex items-center justify-center gap-1 border border-ink bg-paper px-3 py-2 text-sm cursor-pointer has-[:checked]:border-ink has-[:checked]:bg-yolk has-[:checked]:text-paper transition-colors"
-                >
-                  <input
-                    type="radio"
-                    value={v}
-                    className="sr-only"
-                    {...register("hasDebt")}
-                  />
-                  {v}
-                </label>
-              ))}
-            </div>
-          </Field>
-          {hasDebt === "あり" && (
-            <Field label="借金の補足"><input className={inputClass} {...register("debtNote")} /></Field>
-          )}
-          <Field label="現在の詳細状況（生年月日・住所・家族構成・経緯など）">
-            <textarea rows={5} className={inputClass} {...register("situation")} />
-          </Field>
-          <Field label="エント"><input className={inputClass} {...register("ent")} /></Field>
-          <Field label="その他（徘徊・被害妄想 等）">
-            <textarea rows={3} className={inputClass} {...register("others")} />
-          </Field>
-        </section>
-
-        {/* 関係者 */}
-        <section className="space-y-5">
-          <h2 className="flex items-baseline gap-3 border-t-2 border-ink pt-4 font-mincho text-2xl md:text-3xl font-bold text-ink">
-            <span className="display-xl text-base text-ink-mute tracking-widest">04</span>関係者
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
-            <Field label="キーパーソン"><input className={inputClass} placeholder="例：奥様" {...register("keyPerson")} /></Field>
-            <Field label="御社名"><input className={inputClass} {...register("companyName")} /></Field>
-            <Field label="ご担当者名"><input className={inputClass} {...register("contactPerson")} /></Field>
+          <div className="mt-4">
+            <Field label="ADL詳細">
+              <textarea
+                rows={3}
+                className={inputClass}
+                {...register("adlDetail")}
+              />
+            </Field>
           </div>
-        </section>
+        </FormSection>
+
+        {/* Step 4: 状況 */}
+        <FormSection num="4" title="状況">
+          <div className="space-y-4">
+            <Field label="借金の有無" required>
+              <div className="grid grid-cols-2 gap-2 max-w-xs">
+                {(["あり", "なし"] as const).map((v) => (
+                  <label
+                    key={v}
+                    className="inline-flex items-center justify-center rounded-lg border-2 border-brand-line bg-paper px-3 py-2.5 text-sm font-medium cursor-pointer has-[:checked]:border-yolk has-[:checked]:bg-yolk-soft transition-all"
+                  >
+                    <input
+                      type="radio"
+                      value={v}
+                      className="sr-only"
+                      {...register("hasDebt")}
+                    />
+                    {v}
+                  </label>
+                ))}
+              </div>
+            </Field>
+            {hasDebt === "あり" && (
+              <Field label="借金の補足">
+                <input className={inputClass} {...register("debtNote")} />
+              </Field>
+            )}
+            <Field
+              label="現在の詳細状況"
+              hint="生年月日・住所・家族構成・経緯など"
+            >
+              <textarea
+                rows={5}
+                className={inputClass}
+                {...register("situation")}
+              />
+            </Field>
+            <Field label="エント">
+              <input className={inputClass} {...register("ent")} />
+            </Field>
+            <Field label="その他" hint="徘徊・被害妄想 等">
+              <textarea
+                rows={3}
+                className={inputClass}
+                {...register("others")}
+              />
+            </Field>
+          </div>
+        </FormSection>
+
+        {/* Step 5: 関係者 */}
+        <FormSection num="5" title="関係者">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-4">
+            <Field label="キーパーソン">
+              <input
+                className={inputClass}
+                placeholder="例：奥様"
+                {...register("keyPerson")}
+              />
+            </Field>
+            <Field label="御社名">
+              <input className={inputClass} {...register("companyName")} />
+            </Field>
+            <Field label="ご担当者名">
+              <input className={inputClass} {...register("contactPerson")} />
+            </Field>
+          </div>
+        </FormSection>
 
         {/* 固定送信バー */}
-        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-ink bg-paper/95 backdrop-blur">
+        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-brand-line bg-paper/95 backdrop-blur shadow-lift">
           <div className="mx-auto max-w-3xl px-4 py-3 flex items-center justify-between gap-2">
             <button
               type="button"
               onClick={resetAll}
-              className="border border-ink bg-transparent px-3 py-2 text-xs text-ink-fade hover:text-ink"
+              className="rounded-lg border border-brand-line bg-paper px-3 py-2.5 text-sm font-medium text-ink-fade hover:text-ink hover:bg-paper-warm transition-colors"
             >
               リセット
             </button>
-            <div className="flex items-center gap-3">
-              <span className="hidden sm:inline font-mincho text-xs text-ink-fade tracking-wider">
-                ご確認のうえ
-              </span>
-              <button
-                type="submit"
-                className="font-mincho border border-ink bg-ink px-6 py-2.5 text-sm font-bold tracking-wider text-paper hover:bg-yolk hover:border-ink transition-colors"
-              >
-                確認して送信 →
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="inline-flex items-center gap-2 rounded-lg bg-brand px-6 py-2.5 text-sm font-bold text-paper shadow-soft hover:bg-brand-deep transition-colors"
+            >
+              ✓ 確認して送信
+            </button>
           </div>
         </div>
       </form>
@@ -430,6 +537,31 @@ export function IntakeForm() {
         />
       )}
     </>
+  );
+}
+
+function FormSection({
+  num,
+  title,
+  desc,
+  children,
+}: {
+  num: string;
+  title: string;
+  desc?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-2xl border border-brand-line bg-paper shadow-card overflow-hidden">
+      <div className="bg-paper-warm px-5 py-4 border-b border-brand-line flex items-center gap-3">
+        <span className="step-num">{num}</span>
+        <div>
+          <h2 className="text-base font-bold text-ink">{title}</h2>
+          {desc && <p className="text-xs text-ink-fade mt-0.5">{desc}</p>}
+        </div>
+      </div>
+      <div className="px-5 py-5">{children}</div>
+    </section>
   );
 }
 
@@ -447,22 +579,26 @@ function ConfirmModal({
   const preview = formatIntakeMessage(values);
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4"
       onClick={() => (submitting ? null : onCancel())}
     >
       <div
-        className="max-h-[90vh] w-full max-w-2xl overflow-hidden border border-ink bg-paper shadow-2xl flex flex-col"
+        className="max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-2xl bg-paper shadow-lift flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="border-b border-ink px-6 py-4 flex items-center justify-between bg-paper">
+        <div className="border-b border-brand-line px-6 py-4 flex items-center justify-between bg-paper-warm">
           <div>
-            <p className="display-xl text-[11px] tracking-widest text-ink">Confirm</p>
-            <h2 className="font-mincho text-lg font-bold text-ink mt-0.5">送信内容の確認</h2>
+            <p className="text-[11px] font-semibold text-brand tracking-wide">
+              CONFIRM
+            </p>
+            <h2 className="text-lg font-bold text-ink mt-0.5">
+              送信内容の確認
+            </h2>
           </div>
           <button
             onClick={onCancel}
             disabled={submitting}
-            className="text-ink-fade hover:text-ink disabled:opacity-50 text-xl"
+            className="text-ink-fade hover:text-ink disabled:opacity-50 text-2xl leading-none"
             aria-label="閉じる"
           >
             ×
@@ -472,16 +608,16 @@ function ConfirmModal({
           <p className="mb-3 text-xs text-ink-soft">
             この内容で記録されます。修正がある場合は「戻る」を押してください。
           </p>
-          <pre className="whitespace-pre-wrap border border-ink bg-paper p-4 text-xs text-ink leading-relaxed">
+          <pre className="whitespace-pre-wrap rounded-lg border border-brand-line bg-paper-warm p-4 text-xs text-ink leading-relaxed">
             {preview}
           </pre>
         </div>
-        <div className="border-t border-ink px-6 py-3 flex justify-end gap-2 bg-paper">
+        <div className="border-t border-brand-line px-6 py-3 flex justify-end gap-2 bg-paper">
           <button
             type="button"
             onClick={onCancel}
             disabled={submitting}
-            className="border border-ink bg-transparent px-4 py-2 text-sm text-ink hover:bg-ink hover:text-paper transition-colors disabled:opacity-50"
+            className="rounded-lg border border-brand-line bg-paper px-4 py-2 text-sm font-medium text-ink hover:bg-paper-warm transition-colors disabled:opacity-50"
           >
             戻る
           </button>
@@ -489,7 +625,7 @@ function ConfirmModal({
             type="button"
             onClick={onConfirm}
             disabled={submitting}
-            className="font-mincho inline-flex items-center gap-2 border border-ink bg-ink px-5 py-2 text-sm font-bold tracking-wider text-paper hover:bg-yolk hover:border-ink transition-colors disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-2 text-sm font-bold text-paper shadow-card hover:bg-brand-deep transition-colors disabled:opacity-60"
           >
             {submitting && (
               <span className="h-3 w-3 animate-spin rounded-full border-2 border-paper border-t-transparent" />

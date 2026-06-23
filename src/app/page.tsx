@@ -2,52 +2,45 @@ import { IntakeForm } from "@/components/IntakeForm";
 
 export default function Page() {
   return (
-    <main className="mx-auto max-w-5xl px-4 md:px-8 py-6 md:py-10">
-      {/* トップピル群 */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
-        <span className="pill">
-          <span aria-hidden>●</span>
-          Intake Form / 受付
-        </span>
-        <div className="flex gap-2">
-          <a
-            href="https://docs.google.com/spreadsheets/d/1y00PmqtKRCsyrvaH8ydO3QbzVbFXGEVA2dpKOUDJMaY/edit?gid=0#gid=0"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="pill pill-yolk hover:bg-ink hover:text-paper transition-colors"
-          >
-            記録簿 ↗
-          </a>
-          <a
-            href="/admin"
-            className="pill hover:bg-ink hover:text-paper transition-colors"
-          >
-            ADMIN →
-          </a>
+    <main className="mx-auto max-w-3xl px-4 py-6 md:py-10">
+      <header className="mb-6 md:mb-8">
+        <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3">
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand text-paper font-mincho font-bold"
+              aria-hidden
+            >
+              受
+            </div>
+            <div>
+              <h1 className="text-xl md:text-2xl font-bold text-ink">
+                入居相談 受付フォーム
+              </h1>
+              <p className="text-xs text-ink-fade mt-0.5">
+                送信内容はスプレッドシートに自動保存されます
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href="https://docs.google.com/spreadsheets/d/1y00PmqtKRCsyrvaH8ydO3QbzVbFXGEVA2dpKOUDJMaY/edit?gid=0#gid=0"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-brand-line bg-paper px-3 py-2 text-xs font-medium text-brand hover:bg-brand-soft hover:border-brand transition-colors"
+            >
+              <span aria-hidden>📊</span>
+              スプレッドシート
+              <span aria-hidden className="text-ink-fade">↗</span>
+            </a>
+            <a
+              href="/admin"
+              className="inline-flex items-center gap-1 rounded-lg border border-brand-line bg-paper px-3 py-2 text-xs font-medium text-ink hover:bg-paper-warm transition-colors"
+            >
+              管理画面 →
+            </a>
+          </div>
         </div>
-      </div>
-
-      {/* 巨大ヒーロー */}
-      <header className="mb-12 md:mb-16">
-        <h1 className="display-xl text-[clamp(3.5rem,11vw,9rem)] text-ink">
-          NYUKYO
-          <br />
-          INTAKE.
-        </h1>
-        <div className="mt-4 md:mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-end">
-          <p className="mincho-xl text-2xl md:text-4xl">
-            入居相談を、<br />正確に、丁寧に。
-          </p>
-          <p className="text-xs md:text-sm text-ink-fade leading-relaxed font-sans md:text-right">
-            お問い合わせ内容を順にご記入ください。
-            <br />
-            送信内容は記録簿に自動保存されます。
-          </p>
-        </div>
-        {/* 黒い帯 */}
-        <div className="mt-8 h-px bg-ink" />
       </header>
-
       <IntakeForm />
     </main>
   );
