@@ -7,16 +7,16 @@ export default function Page() {
         <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
             <div
-              className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand text-paper font-mincho font-bold"
+              className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand text-paper text-lg font-black shadow-card"
               aria-hidden
             >
               受
             </div>
             <div>
-              <h1 className="text-xl md:text-2xl font-bold text-ink">
+              <h1 className="text-2xl md:text-3xl font-black text-ink">
                 入居相談 受付フォーム
               </h1>
-              <p className="text-xs text-ink-fade mt-0.5">
+              <p className="text-[13px] text-ink-fade mt-1">
                 送信内容はスプレッドシートに自動保存されます
               </p>
             </div>
@@ -26,7 +26,7 @@ export default function Page() {
               href="https://docs.google.com/spreadsheets/d/1y00PmqtKRCsyrvaH8ydO3QbzVbFXGEVA2dpKOUDJMaY/edit?gid=0#gid=0"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-brand-line bg-paper px-3 py-2 text-xs font-medium text-brand hover:bg-brand-soft hover:border-brand transition-colors"
+              className="min-h-[44px] inline-flex items-center gap-1.5 rounded-xl border-2 border-brand-line bg-paper px-4 text-sm font-bold text-brand hover:bg-brand-soft hover:border-brand transition-colors"
             >
               <span aria-hidden>📊</span>
               スプレッドシート
@@ -34,7 +34,7 @@ export default function Page() {
             </a>
             <a
               href="/admin"
-              className="inline-flex items-center gap-1 rounded-lg border border-brand-line bg-paper px-3 py-2 text-xs font-medium text-ink hover:bg-paper-warm transition-colors"
+              className="min-h-[44px] inline-flex items-center gap-1 rounded-xl border-2 border-brand-line bg-paper px-4 text-sm font-bold text-ink hover:bg-paper-warm transition-colors"
             >
               管理画面 →
             </a>

@@ -1,12 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700&family=Shippori+Mincho+B1:wght@600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg: #fafaf7;
+  --bg: #f6f7f9;
   --paper: #ffffff;
-  --ink: #1a1f2e;
+  --ink: #14181f;
   --brand: #1e3a5f;
   --yolk: #e8b923;
 }
@@ -17,19 +17,26 @@ body {
   color: var(--ink);
 }
 
+html {
+  /* スマホでの自動文字縮小を防ぐ */
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont,
     "Hiragino Sans", Meiryo, sans-serif;
   font-feature-settings: "palt";
   -webkit-font-smoothing: antialiased;
+  line-height: 1.7;
 }
 
-/* フォーカス: アクセシブルな黄色リング */
+/* フォーカス: 高視認のダブルリング */
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
-button:focus-visible {
-  outline: 2px solid var(--yolk);
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--yolk);
   outline-offset: 2px;
 }
 
@@ -38,23 +45,30 @@ button:focus-visible {
   color: var(--ink);
 }
 
-/* ステップインジケーター */
+/* ステップ番号バッジ */
 .step-num {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 9999px;
   background: var(--brand);
   color: white;
-  font-weight: 700;
-  font-size: 0.875rem;
-  font-family: "Inter Tight", sans-serif;
+  font-weight: 900;
+  font-size: 1rem;
+  flex-shrink: 0;
 }
 
-/* セクション見出しの左バー */
-.section-bar {
-  border-left: 4px solid var(--yolk);
-  padding-left: 0.875rem;
+/* スクロール時にヘッダ下に隠れないように */
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* 削減モーション設定の尊重 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

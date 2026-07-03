@@ -7,10 +7,10 @@ const config: Config = {
       colors: {
         // 機能的なカラー
         ink: {
-          DEFAULT: "#1a1f2e",
-          soft: "#3d4759",
-          fade: "#6b7280",
-          mute: "#9ca3af",
+          DEFAULT: "#14181f",
+          soft: "#333c4b",
+          fade: "#525d6e",
+          mute: "#8b94a3",
         },
         paper: {
           DEFAULT: "#ffffff",

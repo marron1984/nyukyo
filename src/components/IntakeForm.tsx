@@ -132,6 +132,11 @@ export function IntakeForm() {
       kind: "error",
       message: "未入力または不正な項目があります。赤い表示を確認してください。",
     });
+    // 最初のエラー欄までスクロールして視線を誘導
+    setTimeout(() => {
+      const el = document.querySelector('[data-field-error="true"]');
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
   }
 
   async function confirmedSubmit() {
@@ -173,10 +178,10 @@ export function IntakeForm() {
           <div className="bg-brand-soft px-5 py-4 border-b border-brand-line flex items-center gap-3">
             <span className="step-num">0</span>
             <div>
-              <h2 className="text-base font-bold text-brand">
+              <h2 className="text-lg font-bold text-brand">
                 AIにテンプレを埋めてもらう（任意）
               </h2>
-              <p className="text-xs text-ink-fade mt-0.5">
+              <p className="text-[13px] text-ink-fade mt-0.5">
                 Claude / ChatGPT / Gemini などに渡して使えます
               </p>
             </div>
@@ -189,14 +194,14 @@ export function IntakeForm() {
               <button
                 type="button"
                 onClick={downloadTemplate}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-paper shadow-card hover:bg-brand-deep transition-colors"
+                className="min-h-[48px] inline-flex items-center gap-1.5 rounded-xl bg-brand px-5 text-[15px] font-bold text-paper shadow-card hover:bg-brand-deep transition-colors"
               >
                 ⬇ テンプレをダウンロード
               </button>
               <button
                 type="button"
                 onClick={copyTemplate}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-brand-line bg-paper px-4 py-2 text-sm font-medium text-ink hover:bg-paper-warm transition-colors"
+                className="min-h-[48px] inline-flex items-center gap-1.5 rounded-xl border-2 border-brand-line bg-paper px-5 text-[15px] font-bold text-ink hover:bg-paper-warm transition-colors"
               >
                 📋 コピー
               </button>
@@ -225,10 +230,10 @@ export function IntakeForm() {
           <div className="bg-yolk-soft px-5 py-4 border-b border-brand-line flex items-center gap-3">
             <span className="step-num">1</span>
             <div>
-              <h2 className="text-base font-bold text-ink">
+              <h2 className="text-lg font-bold text-ink">
                 テンプレを貼り付けて自動入力
               </h2>
-              <p className="text-xs text-ink-fade mt-0.5">
+              <p className="text-[13px] text-ink-fade mt-0.5">
                 貼り付けるだけで各項目に自動反映します
               </p>
             </div>
@@ -238,14 +243,14 @@ export function IntakeForm() {
               <button
                 type="button"
                 onClick={loadSample}
-                className="rounded-lg border border-brand-line bg-paper px-3 py-1.5 text-xs font-medium text-ink hover:bg-paper-warm transition-colors"
+                className="min-h-[44px] rounded-xl border-2 border-brand-line bg-paper px-4 text-sm font-bold text-ink hover:bg-paper-warm transition-colors"
               >
                 サンプル投入
               </button>
               <button
                 type="button"
                 onClick={clearPaste}
-                className="rounded-lg border border-brand-line bg-paper px-3 py-1.5 text-xs font-medium text-ink-fade hover:text-ink hover:bg-paper-warm transition-colors"
+                className="min-h-[44px] rounded-xl border-2 border-brand-line bg-paper px-4 text-sm font-medium text-ink-fade hover:text-ink hover:bg-paper-warm transition-colors"
               >
                 クリア
               </button>
@@ -253,14 +258,14 @@ export function IntakeForm() {
                 type="button"
                 onClick={() => applyParsed(pasteText)}
                 disabled={!pasteText.trim()}
-                className="ml-auto inline-flex items-center gap-1 rounded-lg bg-yolk px-4 py-1.5 text-xs font-bold text-ink shadow-card hover:bg-yolk-deep transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="ml-auto min-h-[44px] inline-flex items-center gap-1 rounded-xl bg-yolk px-5 text-sm font-black text-ink shadow-card hover:bg-yolk-deep transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 反映する →
               </button>
             </div>
             <textarea
               rows={8}
-              className={`${inputClass} font-mono text-xs`}
+              className={`${inputClass} font-mono text-[13px]`}
               placeholder={
                 "【問い合わせ日】2026年5月21日\n【顧客名（イニシャル可）】鈴木一世様\n…"
               }
@@ -325,7 +330,7 @@ export function IntakeForm() {
                 {GENDERS.map((g) => (
                   <label
                     key={g}
-                    className="inline-flex items-center justify-center rounded-lg border-2 border-brand-line bg-paper px-2 py-2.5 text-sm font-medium cursor-pointer has-[:checked]:border-yolk has-[:checked]:bg-yolk-soft transition-all"
+                    className="min-h-[48px] inline-flex items-center justify-center gap-1.5 rounded-xl border-2 border-brand-line bg-paper px-3 text-base font-medium cursor-pointer hover:border-brand-line hover:bg-paper-warm has-[:checked]:border-brand has-[:checked]:bg-brand has-[:checked]:text-paper has-[:checked]:font-bold transition-all"
                   >
                     <input
                       type="radio"
@@ -448,7 +453,7 @@ export function IntakeForm() {
                 {(["あり", "なし"] as const).map((v) => (
                   <label
                     key={v}
-                    className="inline-flex items-center justify-center rounded-lg border-2 border-brand-line bg-paper px-3 py-2.5 text-sm font-medium cursor-pointer has-[:checked]:border-yolk has-[:checked]:bg-yolk-soft transition-all"
+                    className="min-h-[48px] inline-flex items-center justify-center gap-1.5 rounded-xl border-2 border-brand-line bg-paper px-3 text-base font-medium cursor-pointer hover:border-brand-line hover:bg-paper-warm has-[:checked]:border-brand has-[:checked]:bg-brand has-[:checked]:text-paper has-[:checked]:font-bold transition-all"
                   >
                     <input
                       type="radio"
@@ -509,20 +514,20 @@ export function IntakeForm() {
         </FormSection>
 
         {/* 固定送信バー */}
-        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-brand-line bg-paper/95 backdrop-blur shadow-lift">
-          <div className="mx-auto max-w-3xl px-4 py-3 flex items-center justify-between gap-2">
+        <div className="fixed bottom-0 inset-x-0 z-40 border-t-2 border-brand-line bg-paper/95 backdrop-blur shadow-lift pb-[env(safe-area-inset-bottom)]">
+          <div className="mx-auto max-w-3xl px-4 py-3 flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={resetAll}
-              className="rounded-lg border border-brand-line bg-paper px-3 py-2.5 text-sm font-medium text-ink-fade hover:text-ink hover:bg-paper-warm transition-colors"
+              className="min-h-[48px] rounded-xl border-2 border-brand-line bg-paper px-4 text-[15px] font-medium text-ink-fade hover:text-ink hover:bg-paper-warm transition-colors"
             >
               リセット
             </button>
             <button
               type="submit"
-              className="inline-flex items-center gap-2 rounded-lg bg-brand px-6 py-2.5 text-sm font-bold text-paper shadow-soft hover:bg-brand-deep transition-colors"
+              className="flex-1 sm:flex-none min-h-[52px] inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-8 text-base font-bold text-paper shadow-soft hover:bg-brand-deep active:scale-[0.99] transition-all"
             >
-              ✓ 確認して送信
+              確認して送信 →
             </button>
           </div>
         </div>
@@ -556,8 +561,8 @@ function FormSection({
       <div className="bg-paper-warm px-5 py-4 border-b border-brand-line flex items-center gap-3">
         <span className="step-num">{num}</span>
         <div>
-          <h2 className="text-base font-bold text-ink">{title}</h2>
-          {desc && <p className="text-xs text-ink-fade mt-0.5">{desc}</p>}
+          <h2 className="text-lg font-bold text-ink">{title}</h2>
+          {desc && <p className="text-[13px] text-ink-fade mt-0.5">{desc}</p>}
         </div>
       </div>
       <div className="px-5 py-5">{children}</div>
